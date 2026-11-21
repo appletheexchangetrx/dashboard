@@ -27,9 +27,9 @@ input,select,textarea{border:1px solid #dfe4ec;border-radius:9px;padding:10px 11
 <div class="shell">
 <header class="top">
   <div class="brand"><div class="mark">P</div><div><h1>Products Dashboard</h1><div class="sub">Admin CRUD · Supabase Edge Function</div></div></div>
-  <div class="actions"><button class="btn" id="settingsBtn">API Settings</button><button class="btn" id="refreshBtn">↻ Refresh</button><button class="btn primary" id="addBtn">＋ Add product</button></div>
+  <div class="actions"><button class="btn" id="refreshBtn">↻ Refresh</button><button class="btn primary" id="addBtn">＋ Add product</button></div>
 </header>
-<div class="notice show" id="securityNotice">Endpoint CRUD ini bersifat publik. Dashboard menggunakan publishable key yang aman untuk browser; jangan pernah memasukkan service_role atau secret key di sini.</div>
+<div class="notice show" id="securityNotice">Endpoint crud-products dikonfigurasi untuk akses publik. Dashboard mengirim request langsung tanpa apikey dan tanpa Authorization.</div>
 <section class="stats">
   <div class="stat"><div class="stat-label">Total products</div><div class="stat-value" id="totalStat">—</div><div class="stat-note">Jumlah record dari API</div></div>
   <div class="stat"><div class="stat-label">Products on this page</div><div class="stat-value" id="pageStat">—</div><div class="stat-note">Data yang sedang ditampilkan</div></div>
@@ -54,32 +54,18 @@ input,select,textarea{border:1px solid #dfe4ec;border-radius:9px;padding:10px 11
 <div class="dialog-foot"><button class="btn danger" id="deleteBtn" style="display:none">Delete product</button><div class="actions"><button class="btn" data-close="editorOverlay">Cancel</button><button class="btn primary" id="saveBtn">Create product</button></div></div></div>
 </div>
 
-<div class="overlay" id="settingsOverlay" role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
-<div class="dialog"><div class="dialog-head"><h2 id="settingsTitle">API Settings</h2><button class="icon-btn" data-close="settingsOverlay">✕</button></div>
-<div class="dialog-body"><div class="config-grid">
-<div class="field"><label for="endpointInput">Edge Function URL</label><input id="endpointInput" type="url"></div>
-<div class="field"><label for="keyInput">Publishable / anon key</label><input id="keyInput" type="password" autocomplete="off"></div>
-</div><p class="help">Key publishable/anon boleh digunakan di browser. Jangan masukkan service_role atau secret key. Pengaturan disimpan di localStorage browser ini.</p></div>
-<div class="dialog-foot"><span></span><div class="actions"><button class="btn" data-close="settingsOverlay">Cancel</button><button class="btn primary" id="saveSettingsBtn">Save settings</button></div></div></div>
-</div>
 <div class="toast" id="toast"></div>
 <script>
 (() => {
 const DEFAULT_ENDPOINT = "https://axednjikcambzbkxyqpp.supabase.co/functions/v1/crud-products";
-const DEFAULT_KEY = "sb_publishable_Vysddy5_b0uZ3iKgnkDTIw_X5O1pBEd";
 const $ = id => document.getElementById(id);
 const state = {page:1,limit:20,total:0,totalPages:0,products:[],editing:null,searchTimer:null,loadSequence:0};
-const config = {
- get endpoint(){return localStorage.getItem("products_api_endpoint") || DEFAULT_ENDPOINT},
- get key(){return localStorage.getItem("products_api_key") || DEFAULT_KEY}
-};
 function toast(message){const el=$("toast");el.textContent=message;el.classList.add("show");clearTimeout(toast.timer);toast.timer=setTimeout(()=>el.classList.remove("show"),3400)}
 function setConnection(ok,note){$("connectionStat").textContent=ok?"Connected":"Error";$("connectionNote").textContent=note;$("connectionStat").style.color=ok?"#23834b":"#c43838"}
-function apiUrl(params={}){const u=new URL(config.endpoint);Object.entries(params).forEach(([k,v])=>{if(v!==undefined&&v!==null&&v!=="")u.searchParams.set(k,v)});return u.toString()}
+function apiUrl(params={}){const u=new URL(DEFAULT_ENDPOINT);Object.entries(params).forEach(([k,v])=>{if(v!==undefined&&v!==null&&v!=="")u.searchParams.set(k,v)});return u.toString()}
 async function request(method,url,body){
- if(!config.key)throw new Error("Publishable key belum diatur. Buka API Settings.");
- const headers={"apikey":config.key,"Content-Type":"application/json"};
- const options={method,headers};if(body!==undefined)options.body=JSON.stringify(body);
+ const headers={};
+ const options={method,headers};if(body!==undefined){headers["Content-Type"]="application/json";options.body=JSON.stringify(body)}
  const response=await fetch(url,options);let result;
  const raw=await response.text();try{result=raw?JSON.parse(raw):{}}catch{result={raw}};
  if(!response.ok||result.success===false)throw new Error(result.error||result.message||("HTTP "+response.status));
@@ -104,9 +90,10 @@ async function load(){
  $("refreshBtn").disabled=true;
  try{
  const result=await request("GET",apiUrl({page:state.page,limit:state.limit,search:$("searchInput").value.trim(),sort:$("sortSelect").value,order:$("orderSelect").value}));
+ if(sequence!==state.loadSequence)return;
  state.products=Array.isArray(result.data)?result.data:[];const pg=result.pagination||{};
  state.total=Number(pg.total??state.products.length);state.totalPages=Number(pg.total_pages??Math.ceil(state.total/state.limit));
- setConnection(true,"Last synced "+new Date().toLocaleTimeString("id-ID",{hour:"2-digit",minute:"2-digit"}));if(sequence!==state.loadSequence)return;render();
+ setConnection(true,"Last synced "+new Date().toLocaleTimeString("id-ID",{hour:"2-digit",minute:"2-digit"}));render();
  }catch(e){if(sequence!==state.loadSequence)return;state.products=[];state.total=0;state.totalPages=0;state.page=1;render();$("productRows").innerHTML='<tr><td colspan="6" class="empty">Could not load products: '+esc(e.message)+'</td></tr>';setConnection(false,e.message);toast(e.message)}
  finally{if(sequence===state.loadSequence)$("refreshBtn").disabled=false}
 }
@@ -118,11 +105,12 @@ function openEditor(index){
  $("deleteBtn").style.display=isEdit?"inline-block":"none";
  $("methodField").style.display=isEdit?"grid":"none";
  $("editorHint").textContent=isEdit?"PATCH · item_group_id adalah identitas tetap dan tidak dapat diubah saat Edit. Setiap variant wajib memiliki id.":"POST · title dan item_group_id wajib. variants harus berupa array; setiap variant wajib memiliki id.";
- $("productJson").value=JSON.stringify(isEdit?state.editing:{title:"",description:null,brand:null,gtin:null,mpn:null,item_group_id:"",availability:"in stock",condition:"new",quantity_to_sell_on_facebook:null,expiration_date:null,link:null,google_product_category:null,product_type:null,rich_text_description:null,custom_label_0:null,sale_price_effective_date:null,variants:[]},null,2);
+ $("productJson").value=JSON.stringify(isEdit?productForEdit(state.editing):{title:"",description:null,brand:null,gtin:null,mpn:null,item_group_id:"",availability:"in stock",condition:"new",quantity_to_sell_on_facebook:null,expiration_date:null,link:null,google_product_category:null,product_type:null,rich_text_description:null,custom_label_0:null,sale_price_effective_date:null,variants:[]},null,2);
  $("editorOverlay").classList.add("open");
 }
 const PRODUCT_FIELDS=new Set(["title","description","brand","gtin","mpn","item_group_id","availability","condition","quantity_to_sell_on_facebook","expiration_date","link","google_product_category","product_type","rich_text_description","custom_label_0","sale_price_effective_date","variants"]);
 const VARIANT_FIELDS=new Set(["id","size","color","price","image_link","sale_price","additional_image_link"]);
+function productForEdit(product){return Object.fromEntries([...PRODUCT_FIELDS].filter(key=>Object.prototype.hasOwnProperty.call(product,key)).map(key=>[key,product[key]]));}
 function validateProduct(data,isEdit){
  const unknown=Object.keys(data).filter(key=>!PRODUCT_FIELDS.has(key));
  if(unknown.length)throw new Error("Field product tidak didukung crud-products: "+unknown.join(", "));
@@ -130,7 +118,7 @@ function validateProduct(data,isEdit){
  if(!isEdit&&(typeof data.item_group_id!=="string"||!data.item_group_id.trim()))throw new Error("item_group_id wajib berupa string yang tidak kosong.");
  if(isEdit&&data.item_group_id!==state.editing.item_group_id)throw new Error("item_group_id tidak dapat diubah saat Edit.");
  if(data.quantity_to_sell_on_facebook!==undefined&&data.quantity_to_sell_on_facebook!==null&&(!Number.isInteger(data.quantity_to_sell_on_facebook)||data.quantity_to_sell_on_facebook<0))throw new Error("quantity_to_sell_on_facebook harus integer non-negatif atau null.");
- if(data.variants!==undefined&&data.variants!==null){
+ if(data.variants!==undefined){
   if(!Array.isArray(data.variants))throw new Error("variants harus berupa array atau null.");
   data.variants.forEach((variant,index)=>{
    const prefix="variants["+index+"]";
@@ -155,7 +143,7 @@ async function saveProduct(){
  await request("PATCH",apiUrl({item_group_id:id}),data);
  toast("Product updated successfully.");
  }else{
- await request("POST",config.endpoint,data);toast("Product created successfully.");
+ await request("POST",DEFAULT_ENDPOINT,data);toast("Product created successfully.");
  }
  $("editorOverlay").classList.remove("open");await load();
  }catch(e){toast(e.message)}finally{$("saveBtn").disabled=false}
@@ -167,16 +155,6 @@ async function deleteProduct(){
  try{await request("DELETE",apiUrl({item_group_id:id}));$("editorOverlay").classList.remove("open");toast("Product deleted.");if(state.products.length===1&&state.page>1)state.page--;await load()}
  catch(e){toast(e.message)}finally{$("deleteBtn").disabled=false}
 }
-function openSettings(){$("endpointInput").value=config.endpoint;$("keyInput").value=config.key;$("settingsOverlay").classList.add("open")}
-$("settingsBtn").addEventListener("click",openSettings);
-$("saveSettingsBtn").addEventListener("click",()=>{
- const endpoint=$("endpointInput").value.trim(),key=$("keyInput").value.trim();
- try{new URL(endpoint)}catch{toast("URL endpoint tidak valid.");return}
- if(!/^https:\/\//i.test(endpoint)){toast("Endpoint harus menggunakan HTTPS.");return}
- if(key.toLowerCase().includes("service_role")||key.toLowerCase().includes("secret")){toast("Jangan gunakan service_role atau secret key.");return}
- localStorage.setItem("products_api_endpoint",endpoint);localStorage.setItem("products_api_key",key);
- $("settingsOverlay").classList.remove("open");state.page=1;load();toast("API settings saved.");
-});
 $("addBtn").addEventListener("click",()=>openEditor());
 $("refreshBtn").addEventListener("click",load);
 $("saveBtn").addEventListener("click",saveProduct);
