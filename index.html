@@ -259,7 +259,7 @@ function initializeVariantManager(variants){
  const colors=[],sizes=[],colorMap=new Map(),sizeMap=new Map(),ids=new Map(),conflicts=[];
  variants.forEach(v=>{
   const ck=makeGroupKey(v.color),sk=makeGroupKey(v.size);
-  if(!colorMap.has(ck)){const g={key:"c-"+colors.length,color:v.color??"",image_link:v.image_link??"",additional_image_link:Array.isArray(v.additional_image_link)?v.additional_image_link.join("\n"):""};colorMap.set(ck,g);colors.push(g);}
+  if(!colorMap.has(ck)){const g={key:"c-"+colors.length,color:v.color??"",image_link:v.image_link??"",uploading:false,additional_image_link:Array.isArray(v.additional_image_link)?v.additional_image_link.join("\n"):""};colorMap.set(ck,g);colors.push(g);}
   else{const g=colorMap.get(ck),images=Array.isArray(v.additional_image_link)?v.additional_image_link.join("\n"):"";if(g.image_link!==(v.image_link??"")||g.additional_image_link!==images)conflicts.push("Data gambar untuk warna "+(v.color||"(kosong)")+" berbeda antar variant.");}
   if(!sizeMap.has(sk)){const g={key:"s-"+sizes.length,size:v.size??"",price:v.price??"",sale_price:v.sale_price??""};sizeMap.set(sk,g);sizes.push(g);}
   else{const g=sizeMap.get(sk);if(String(g.price)!==String(v.price??"")||String(g.sale_price)!==String(v.sale_price??""))conflicts.push("Harga untuk ukuran "+(v.size||"(kosong)")+" berbeda antar variant.");}
@@ -272,7 +272,13 @@ function initializeVariantManager(variants){
 }
 function renderVariantManager(){
  const vm=state.variantManager;if(!vm)return;
- const colorHtml=vm.colors.map((c,i)=>'<div class="variant-color-card" data-color-card="'+esc(c.key)+'"><div class="variant-color-card-head"><strong style="font-size:11px">Color '+(i+1)+'</strong><button class="icon-btn" type="button" data-remove-color="'+esc(c.key)+'">Remove</button></div><div class="field"><label>Color name</label><input data-color-field="color" value="'+esc(c.color)+'" placeholder="e.g. Cosmic Orange"></div><div class="field"><label>Image URL (image_link)</label><input data-color-field="image_link" type="url" value="'+esc(c.image_link)+'" placeholder="https://..."></div><div class="field"><label>Additional images (one URL per line)</label><textarea data-color-field="additional_image_link" placeholder="https://...">'+esc(c.additional_image_link)+'</textarea></div></div>').join("");
+ const colorHtml=vm.colors.map((c,i)=>{
+  let action="";
+  if(c.uploading)action='<button class="btn" type="button" disabled>Uploading...</button>';
+  else if(c.image_link&&isProductsBucketUrl(c.image_link))action='<span class="variant-manager-help">✓ Uploaded to products</span>';
+  else if(c.image_link&&(c.image_link.trim().startsWith("http://")||c.image_link.trim().startsWith("https://")))action='<button class="btn" type="button" data-upload-color-image="'+esc(c.key)+'">↥ Upload to bucket</button>';
+  return '<div class="variant-color-card" data-color-card="'+esc(c.key)+'"><div class="variant-color-card-head"><strong style="font-size:11px">Color '+(i+1)+'</strong><button class="icon-btn" type="button" data-remove-color="'+esc(c.key)+'">Remove</button></div><div class="field"><label>Color name</label><input data-color-field="color" value="'+esc(c.color)+'" placeholder="e.g. Cosmic Orange"></div><div class="field"><label>Image URL (image_link)</label><input data-color-field="image_link" type="url" value="'+esc(c.image_link)+'" placeholder="https://..."></div><div class="variant-manager-title">'+action+'</div><div class="field"><label>Additional images (one URL per line)</label><textarea data-color-field="additional_image_link" placeholder="https://...">'+esc(c.additional_image_link)+'</textarea></div></div>';
+}).join("");
  const sizeHtml=vm.sizes.map((s,i)=>'<div class="variant-size-row" data-size-row="'+esc(s.key)+'"><div class="field"><label>Size '+(i+1)+'</label><input data-size-field="size" value="'+esc(s.size)+'" placeholder="e.g. 256GB"></div><div class="field"><label>Price</label><input data-size-field="price" type="number" step="any" value="'+esc(s.price)+'"></div><div class="field"><label>Sale price</label><input data-size-field="sale_price" type="number" step="any" value="'+esc(s.sale_price)+'"></div><button class="icon-btn" type="button" data-remove-size="'+esc(s.key)+'" aria-label="Remove size">×</button></div>').join("");
  const conflictHtml=vm.conflicts.length?'<div class="variant-conflict"><strong>Perlu diperiksa:</strong> '+[...new Set(vm.conflicts)].map(esc).join("<br>")+'<br>Nilai dari variant pertama digunakan. Periksa nilai bersama sebelum menyimpan.</div>':"";
  const count=vm.colors.length*vm.sizes.length;
@@ -283,6 +289,21 @@ function syncVariantManagerFromDOM(){
  const vm=state.variantManager;if(!vm)return;
  vm.colors.forEach(c=>{const card=[...$("variantFields").querySelectorAll("[data-color-card]")].find(el=>el.dataset.colorCard===c.key);if(!card)return;card.querySelectorAll("[data-color-field]").forEach(el=>c[el.dataset.colorField]=el.value);});
  vm.sizes.forEach(s=>{const row=[...$("variantFields").querySelectorAll("[data-size-row]")].find(el=>el.dataset.sizeRow===s.key);if(!row)return;row.querySelectorAll("[data-size-field]").forEach(el=>s[el.dataset.sizeField]=el.value);});
+}
+async function uploadColorImage(colorKey){
+ syncVariantManagerFromDOM();
+ const color=state.variantManager?.colors.find(item=>item.key===colorKey);
+ if(!color||!color.image_link.trim())return;
+ if(isProductsBucketUrl(color.image_link)){toast("Gambar sudah berada di bucket products.");return}
+ color.uploading=true;renderVariantManager();
+ try{
+  const publicUrl=await uploadImageUrl(color.image_link.trim(),state.editing?.item_group_id);
+  color.image_link=publicUrl;color.uploading=false;renderVariantManager();
+  toast("Gambar berhasil diunggah dan image_link diperbarui.");
+ }catch(error){
+  color.uploading=false;renderVariantManager();
+  toast("Upload gambar gagal: "+error.message+" URL asli tetap dipertahankan.");
+ }
 }
 function addColorGroup(){syncVariantManagerFromDOM();const vm=state.variantManager;vm.colors.push({key:"c-"+newVariantId(),color:"",image_link:"",additional_image_link:""});renderVariantManager();}
 function addSizeGroup(){syncVariantManagerFromDOM();const vm=state.variantManager;vm.sizes.push({key:"s-"+newVariantId(),size:"",price:"",sale_price:""});renderVariantManager();}
@@ -448,6 +469,7 @@ $("editPageCancelBtn").addEventListener("click",closeEditPage);
 $("editPageSaveBtn").addEventListener("click",saveEditPage);
 $("editPageDeleteBtn").addEventListener("click",deleteProduct);
 $("variantFields").addEventListener("click",e=>{
+ const uploadBtn=e.target.closest("[data-upload-color-image]");if(uploadBtn){uploadColorImage(uploadBtn.dataset.uploadColorImage);return}
  if(e.target.closest("[data-add-color]")){addColorGroup();return}
  if(e.target.closest("[data-add-size]")){addSizeGroup();return}
  const removeColor=e.target.closest("[data-remove-color]");
@@ -455,16 +477,7 @@ $("variantFields").addEventListener("click",e=>{
  const removeSize=e.target.closest("[data-remove-size]");
  if(removeSize){syncVariantManagerFromDOM();state.variantManager.sizes=state.variantManager.sizes.filter(s=>s.key!==removeSize.dataset.removeSize);renderVariantManager();return}
 });
-$("variantFields").addEventListener("paste",async e=>{
- const input=e.target.closest('[data-color-field="image_link"]');if(!input)return;
- const pasted=(e.clipboardData||window.clipboardData)?.getData("text")?.trim();if(!pasted)return;
- let parsed;try{parsed=new URL(pasted)}catch{return}
- if(!["http:","https:"].includes(parsed.protocol)||isProductsBucketUrl(pasted))return;
- e.preventDefault();input.value=pasted;input.disabled=true;toast("Mengunggah gambar ke bucket products…");
- try{input.value=await uploadImageUrl(pasted,state.editing?.item_group_id);syncVariantManagerFromDOM();toast("Gambar warna berhasil diunggah.");}
- catch(error){toast("Upload gambar gagal: "+error.message+" URL asli dipertahankan.");}
- finally{input.disabled=false}
-});
+
 $("refreshBtn").addEventListener("click",load);
 $("saveBtn").addEventListener("click",saveProduct);
 $("deleteBtn").addEventListener("click",deleteProduct);
