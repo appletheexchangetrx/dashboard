@@ -19,7 +19,7 @@ input,select,textarea{border:1px solid #dfe4ec;border-radius:9px;padding:10px 11
 .product-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:16px;padding:18px}.product-card{min-width:0;border:1px solid #e8ebf1;border-radius:14px;overflow:hidden;background:#fff;display:flex;flex-direction:column;transition:box-shadow .15s,transform .15s}.product-card:hover{transform:translateY(-2px);box-shadow:0 10px 28px #1720330d}.product-media{height:190px;background:#f5f7fa;display:grid;place-items:center;overflow:hidden}.product-media img{width:100%;height:100%;object-fit:contain}.media-placeholder{color:#a3adbd;font-size:12px}.product-content{padding:14px;display:flex;flex-direction:column;gap:8px;flex:1}.product-title{font-size:14px;line-height:1.45;font-weight:750;color:#202b40;overflow-wrap:anywhere}.product-brand{font-size:12px;color:#8993a5}.product-meta{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}.product-type{font-size:11px;color:#59657a;background:#f0f3f8;border-radius:99px;padding:5px 9px;max-width:100%;overflow-wrap:anywhere}.product-price{font-size:14px;font-weight:750;color:#202b40}.product-id{font-size:11px;color:#8993a5;overflow-wrap:anywhere}.product-actions{display:flex;gap:7px;margin-top:auto;padding-top:5px}.product-actions button{flex:1}.pill{display:inline-flex;border-radius:99px;padding:5px 9px;background:#f0f3f8;color:#59657a;font-size:11px;font-weight:650}.pill.in{background:#eaf7ef;color:#23834b}.pill.out{background:#fff1e9;color:#b65c27}.row-actions{display:flex;gap:6px}.icon-btn{border:1px solid #e7eaf0;background:white;border-radius:8px;padding:7px 9px;color:#526078;font-size:12px}.empty{padding:52px 20px;text-align:center;color:#8791a3;font-size:13px;grid-column:1/-1}.footer{padding:13px 16px;display:flex;align-items:center;justify-content:space-between;gap:10px;color:#8590a3;font-size:12px}
 .status{display:flex;align-items:center;gap:8px;font-size:12px;color:#748096}.dot{width:7px;height:7px;border-radius:50%;background:#c4cad4}.dot.ok{background:#28a765}.dot.err{background:#d34b4b}
 .notice{display:none;margin:0 0 15px;padding:11px 14px;border-radius:10px;background:#fff4e8;color:#98601e;font-size:12px;line-height:1.5}.notice.show{display:block}
-.overlay{position:fixed;inset:0;background:#10182775;display:none;align-items:center;justify-content:center;padding:18px;z-index:10}.overlay.open{display:flex}.dialog{width:min(760px,100%);max-height:min(90vh,900px);overflow:auto;background:white;border-radius:17px;box-shadow:0 24px 80px #0c173333}.dialog-head{padding:19px 22px;border-bottom:1px solid #edf0f4;display:flex;align-items:center;justify-content:space-between}.dialog-head h2{margin:0;font-size:17px}.dialog-body{padding:20px 22px}.dialog-foot{padding:15px 22px;border-top:1px solid #edf0f4;display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap}.field{display:grid;gap:7px;margin-bottom:14px}.field label{font-size:12px;font-weight:700;color:#4d5870}.field small{font-size:11px;color:#8b95a7}.field textarea{width:100%;min-height:330px;resize:vertical;font:12px/1.55 ui-monospace,SFMono-Regular,Consolas,monospace;tab-size:2}.config-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.config-grid .field{margin:0}.help{font-size:11px;color:#8b95a7;line-height:1.55;margin-top:13px}.toast{position:fixed;right:20px;bottom:20px;z-index:20;padding:12px 16px;background:#172033;color:white;border-radius:10px;font-size:12px;box-shadow:0 10px 30px #17203330;display:none;max-width:min(420px,calc(100vw - 40px))}.toast.show{display:block}
+.edit-page{display:none;background:#fff;border:1px solid #e8ebf1;border-radius:15px;overflow:hidden}.edit-page.active{display:block}.edit-page-head{padding:19px 22px;border-bottom:1px solid #edf0f4;display:flex;align-items:center;justify-content:space-between;gap:12px}.edit-page-head h2{font-size:18px;margin:0}.edit-page-body{padding:22px}.edit-page textarea{width:100%;min-height: min(62vh,680px);resize:vertical;font:12px/1.6 ui-monospace,SFMono-Regular,Consolas,monospace}.edit-page-foot{padding:15px 22px;border-top:1px solid #edf0f4;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}.edit-page-meta{font-size:12px;color:#8993a5;line-height:1.6}@media(max-width:650px){.edit-page-head,.edit-page-body,.edit-page-foot{padding:15px}}.overlay{position:fixed;inset:0;background:#10182775;display:none;align-items:center;justify-content:center;padding:18px;z-index:10}.overlay.open{display:flex}.dialog{width:min(760px,100%);max-height:min(90vh,900px);overflow:auto;background:white;border-radius:17px;box-shadow:0 24px 80px #0c173333}.dialog-head{padding:19px 22px;border-bottom:1px solid #edf0f4;display:flex;align-items:center;justify-content:space-between}.dialog-head h2{margin:0;font-size:17px}.dialog-body{padding:20px 22px}.dialog-foot{padding:15px 22px;border-top:1px solid #edf0f4;display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap}.field{display:grid;gap:7px;margin-bottom:14px}.field label{font-size:12px;font-weight:700;color:#4d5870}.field small{font-size:11px;color:#8b95a7}.field textarea{width:100%;min-height:330px;resize:vertical;font:12px/1.55 ui-monospace,SFMono-Regular,Consolas,monospace;tab-size:2}.config-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.config-grid .field{margin:0}.help{font-size:11px;color:#8b95a7;line-height:1.55;margin-top:13px}.toast{position:fixed;right:20px;bottom:20px;z-index:20;padding:12px 16px;background:#172033;color:white;border-radius:10px;font-size:12px;box-shadow:0 10px 30px #17203330;display:none;max-width:min(420px,calc(100vw - 40px))}.toast.show{display:block}
 @media(max-width:650px){.shell{padding-top:20px}.top{align-items:flex-start;flex-direction:column}.actions{width:100%}.actions .btn{flex:1}.stats{gap:8px}.stat{padding:13px}.stat-value{font-size:19px}.toolbar{padding:12px}.product-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;padding:10px}.product-media{height:145px}.product-content{padding:11px}.product-title{font-size:13px}.footer{align-items:flex-start;flex-direction:column}.config-grid{grid-template-columns:1fr}.dialog-body{padding:16px}.dialog-head,.dialog-foot{padding:15px 16px}}@media(max-width:390px){.product-grid{grid-template-columns:1fr}.product-media{height:180px}}
 </style>
 </head>
@@ -30,6 +30,11 @@ input,select,textarea{border:1px solid #dfe4ec;border-radius:9px;padding:10px 11
   <div class="actions"><button class="btn" id="refreshBtn">↻ Refresh</button><button class="btn primary" id="addBtn">＋ Add product</button></div>
 </header>
 <div class="notice show" id="securityNotice">Endpoint crud-products dikonfigurasi untuk akses publik. Dashboard mengirim request langsung tanpa apikey dan tanpa Authorization.</div>
+<section class="edit-page" id="editPage" aria-labelledby="editPageTitle">
+  <div class="edit-page-head"><div><h2 id="editPageTitle">Edit product</h2><div class="sub" id="editPageSubtitle">Update product data</div></div><button class="btn" id="backToProductsBtn">← Back to products</button></div>
+  <div class="edit-page-body"><div class="field"><label for="editPageJson">Product JSON</label><textarea id="editPageJson" spellcheck="false" aria-describedby="editPageHelp"></textarea><small id="editPageHelp">Edit field produk dan variants sesuai schema crud-products. item_group_id menjadi identitas tetap dan tidak dapat diubah.</small></div><div class="edit-page-meta">Perubahan dikirim menggunakan PATCH ke endpoint crud-products. Field database seperti id, created_at, dan updated_at tidak disertakan.</div></div>
+  <div class="edit-page-foot"><button class="btn danger" id="editPageDeleteBtn">Delete product</button><div class="actions"><button class="btn" id="editPageCancelBtn">Cancel</button><button class="btn primary" id="editPageSaveBtn">Save changes</button></div></div>
+</section>
 <section class="stats">
   <div class="stat"><div class="stat-label">Total products</div><div class="stat-value" id="totalStat">—</div><div class="stat-note">Jumlah record dari API</div></div>
   <div class="stat"><div class="stat-label">Products on this page</div><div class="stat-value" id="pageStat">—</div><div class="stat-note">Data yang sedang ditampilkan</div></div>
@@ -122,6 +127,40 @@ async function load(){
  }catch(e){if(sequence!==state.loadSequence)return;state.products=[];state.total=0;state.totalPages=0;state.page=1;render();$("productCards").innerHTML='<div class="empty">Could not load products: '+esc(e.message)+'</div>';setConnection(false,e.message);toast(e.message)}
  finally{if(sequence===state.loadSequence)$("refreshBtn").disabled=false}
 }
+function showEditPage(index){
+ const product=state.products[index];
+ if(!product)return;
+ state.editing=product;
+ $("editPageTitle").textContent="Edit product";
+ $("editPageSubtitle").textContent=(product.title||"Untitled product")+" · "+(product.item_group_id||"");
+ $("editPageJson").value=JSON.stringify(productForEdit(product),null,2);
+ $("editPage").classList.add("active");
+ document.querySelector(".stats").style.display="none";
+ document.querySelector(".panel").style.display="none";
+ document.querySelector(".shell > .help").style.display="none";
+ window.scrollTo({top:0,behavior:"instant"});
+}
+function closeEditPage(){
+ $("editPage").classList.remove("active");
+ document.querySelector(".stats").style.display="";
+ document.querySelector(".panel").style.display="";
+ document.querySelector(".shell > .help").style.display="";
+ state.editing=null;
+}
+async function saveEditPage(){
+ let data;
+ try{data=JSON.parse($("editPageJson").value)}catch(e){toast("JSON tidak valid: "+e.message);return}
+ if(!data||Array.isArray(data)||typeof data!=="object"){toast("Product JSON harus berupa object.");return}
+ const id=state.editing?.item_group_id;
+ try{validateProduct(data,true)}catch(e){toast(e.message);return}
+ $("editPageSaveBtn").disabled=true;
+ try{
+  await request("PATCH",apiUrl({item_group_id:id}),data);
+  toast("Product updated successfully.");
+  closeEditPage();
+  await load();
+ }catch(e){toast(e.message)}finally{$("editPageSaveBtn").disabled=false}
+}
 function openEditor(index){
  const isEdit=index!==undefined;state.editing=isEdit?state.products[index]:null;
  $("saveBtn").style.display="";$("productJson").readOnly=false;
@@ -181,6 +220,10 @@ async function deleteProduct(){
  catch(e){toast(e.message)}finally{$("deleteBtn").disabled=false}
 }
 $("addBtn").addEventListener("click",()=>openEditor());
+$("backToProductsBtn").addEventListener("click",closeEditPage);
+$("editPageCancelBtn").addEventListener("click",closeEditPage);
+$("editPageSaveBtn").addEventListener("click",saveEditPage);
+$("editPageDeleteBtn").addEventListener("click",deleteProduct);
 $("refreshBtn").addEventListener("click",load);
 $("saveBtn").addEventListener("click",saveProduct);
 $("deleteBtn").addEventListener("click",deleteProduct);
@@ -191,7 +234,7 @@ $("limitSelect").addEventListener("change",()=>{state.limit=Number($("limitSelec
 $("searchInput").addEventListener("input",()=>{clearTimeout(state.searchTimer);state.searchTimer=setTimeout(()=>{state.page=1;load()},350)});
 document.querySelectorAll("[data-close]").forEach(btn=>btn.addEventListener("click",()=>$(btn.dataset.close).classList.remove("open")));
 document.querySelectorAll(".overlay").forEach(overlay=>overlay.addEventListener("click",e=>{if(e.target===overlay)overlay.classList.remove("open")}));
-$("productCards").addEventListener("click",e=>{const edit=e.target.closest("[data-edit]"),view=e.target.closest("[data-view]");if(edit)openEditor(Number(edit.dataset.edit));if(view){const p=state.products[Number(view.dataset.view)];$("editorTitle").textContent="View product";$("productJson").value=JSON.stringify(p,null,2);$("editorHint").textContent="Read-only preview. Close this dialog when finished.";$("saveBtn").style.display="none";$("deleteBtn").style.display="none";$("methodField").style.display="none";$("editorOverlay").classList.add("open");$("productJson").readOnly=true;}});
+$("productCards").addEventListener("click",e=>{const edit=e.target.closest("[data-edit]"),view=e.target.closest("[data-view]");if(edit)showEditPage(Number(edit.dataset.edit));if(view){const p=state.products[Number(view.dataset.view)];$("editorTitle").textContent="View product";$("productJson").value=JSON.stringify(p,null,2);$("editorHint").textContent="Read-only preview. Close this dialog when finished.";$("saveBtn").style.display="none";$("deleteBtn").style.display="none";$("methodField").style.display="none";$("editorOverlay").classList.add("open");$("productJson").readOnly=true;}});
 $("editorOverlay").addEventListener("click",e=>{if(e.target.closest("[data-close]")||e.target===$("editorOverlay")){$("saveBtn").style.display="";$("productJson").readOnly=false}});
 load();
 })();
