@@ -45,7 +45,7 @@ input,select,textarea{border:1px solid #dfe4ec;border-radius:9px;padding:10px 11
   <div class="table-wrap"><table><thead><tr><th>Product</th><th>Item group ID</th><th>Availability</th><th>Variants</th><th>Updated</th><th>Actions</th></tr></thead><tbody id="productRows"><tr><td colspan="6" class="empty">Loading products…</td></tr></tbody></table></div>
   <div class="footer"><div id="rangeText">—</div><div class="actions"><button class="btn" id="prevBtn">← Previous</button><button class="btn" id="nextBtn">Next →</button></div></div>
 </section>
-<p class="help">Data ditampilkan langsung dari endpoint <code>get-products</code>. Perubahan disimpan ke database melalui Edge Function. Gunakan Edit JSON untuk mengatur seluruh field product dan variants sesuai schema API.</p>
+<p class="help">Data ditampilkan langsung dari endpoint <code>crud-products</code>. Perubahan disimpan ke database melalui Edge Function. Gunakan Edit JSON untuk mengatur seluruh field product dan variants sesuai schema API.</p>
 </div>
 
 <div class="overlay" id="editorOverlay" role="dialog" aria-modal="true" aria-labelledby="editorTitle">
@@ -65,7 +65,7 @@ input,select,textarea{border:1px solid #dfe4ec;border-radius:9px;padding:10px 11
 <div class="toast" id="toast"></div>
 <script>
 (() => {
-const DEFAULT_ENDPOINT = "https://axednjikcambzbkxyqpp.supabase.co/functions/v1/get-products";
+const DEFAULT_ENDPOINT = "https://axednjikcambzbkxyqpp.supabase.co/functions/v1/crud-products";
 const DEFAULT_KEY = "sb_publishable_Vysddy5_b0uZ3iKgnkDTIw_X5O1pBEd";
 const $ = id => document.getElementById(id);
 const state = {page:1,limit:20,total:0,totalPages:0,products:[],editing:null,searchTimer:null};
