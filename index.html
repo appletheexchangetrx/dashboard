@@ -50,7 +50,7 @@ input,select,textarea{border:1px solid #dfe4ec;border-radius:9px;padding:10px 11
 
 <div class="overlay" id="editorOverlay" role="dialog" aria-modal="true" aria-labelledby="editorTitle">
 <div class="dialog"><div class="dialog-head"><h2 id="editorTitle">Add product</h2><button class="icon-btn" data-close="editorOverlay">✕</button></div>
-<div class="dialog-body"><div class="field"><label for="productJson">Product JSON</label><textarea id="productJson" spellcheck="false"></textarea><small id="editorHint">POST · title dan item_group_id wajib. variants harus berupa array; setiap variant wajib memiliki id.</small></div><div class="field" id="methodField"><label for="updateMethod">Update method</label><select id="updateMethod"><option value="PATCH">PATCH (recommended)</option><option value="PUT">PUT</option></select></div><div class="help">Field product: title, description, brand, gtin, mpn, item_group_id, availability, condition, quantity_to_sell_on_facebook, expiration_date, link, google_product_category, product_type, rich_text_description, custom_label_0, sale_price_effective_date, variants. Variant: id, size, color, price, image_link, sale_price, additional_image_link.</div></div>
+<div class="dialog-body"><div class="field"><label for="productJson">Product JSON</label><textarea id="productJson" spellcheck="false"></textarea><small id="editorHint">POST · title dan item_group_id wajib. variants harus berupa array; setiap variant wajib memiliki id.</small></div><div class="field" id="methodField" style="display:none"><label>Update method</label><input value="PATCH" readonly aria-label="Update method PATCH"></div><div class="help">Field product: title, description, brand, gtin, mpn, item_group_id, availability, condition, quantity_to_sell_on_facebook, expiration_date, link, google_product_category, product_type, rich_text_description, custom_label_0, sale_price_effective_date, variants. Variant: id, size, color, price, image_link, sale_price, additional_image_link.</div></div>
 <div class="dialog-foot"><button class="btn danger" id="deleteBtn" style="display:none">Delete product</button><div class="actions"><button class="btn" data-close="editorOverlay">Cancel</button><button class="btn primary" id="saveBtn">Create product</button></div></div></div>
 </div>
 
@@ -68,7 +68,7 @@ input,select,textarea{border:1px solid #dfe4ec;border-radius:9px;padding:10px 11
 const DEFAULT_ENDPOINT = "https://axednjikcambzbkxyqpp.supabase.co/functions/v1/crud-products";
 const DEFAULT_KEY = "sb_publishable_Vysddy5_b0uZ3iKgnkDTIw_X5O1pBEd";
 const $ = id => document.getElementById(id);
-const state = {page:1,limit:20,total:0,totalPages:0,products:[],editing:null,searchTimer:null};
+const state = {page:1,limit:20,total:0,totalPages:0,products:[],editing:null,searchTimer:null,loadSequence:0};
 const config = {
  get endpoint(){return localStorage.getItem("products_api_endpoint") || DEFAULT_ENDPOINT},
  get key(){return localStorage.getItem("products_api_key") || DEFAULT_KEY}
@@ -99,35 +99,60 @@ function render(){
  $("prevBtn").disabled=state.page<=1;$("nextBtn").disabled=!state.totalPages||state.page>=state.totalPages;
 }
 async function load(){
+ const sequence=++state.loadSequence;
  $("productRows").innerHTML='<tr><td colspan="6" class="empty">Loading products…</td></tr>';
  $("refreshBtn").disabled=true;
  try{
  const result=await request("GET",apiUrl({page:state.page,limit:state.limit,search:$("searchInput").value.trim(),sort:$("sortSelect").value,order:$("orderSelect").value}));
  state.products=Array.isArray(result.data)?result.data:[];const pg=result.pagination||{};
  state.total=Number(pg.total??state.products.length);state.totalPages=Number(pg.total_pages??Math.ceil(state.total/state.limit));
- setConnection(true,"Last synced "+new Date().toLocaleTimeString("id-ID",{hour:"2-digit",minute:"2-digit"}));render();
- }catch(e){state.products=[];render();$("productRows").innerHTML='<tr><td colspan="6" class="empty">Could not load products: '+esc(e.message)+'</td></tr>';setConnection(false,e.message);toast(e.message)}
- finally{$("refreshBtn").disabled=false}
+ setConnection(true,"Last synced "+new Date().toLocaleTimeString("id-ID",{hour:"2-digit",minute:"2-digit"}));if(sequence!==state.loadSequence)return;render();
+ }catch(e){if(sequence!==state.loadSequence)return;state.products=[];state.total=0;state.totalPages=0;state.page=1;render();$("productRows").innerHTML='<tr><td colspan="6" class="empty">Could not load products: '+esc(e.message)+'</td></tr>';setConnection(false,e.message);toast(e.message)}
+ finally{if(sequence===state.loadSequence)$("refreshBtn").disabled=false}
 }
 function openEditor(index){
  const isEdit=index!==undefined;state.editing=isEdit?state.products[index]:null;
+ $("saveBtn").style.display="";$("productJson").readOnly=false;
  $("editorTitle").textContent=isEdit?"Edit product":"Add product";
  $("saveBtn").textContent=isEdit?"Save changes":"Create product";
  $("deleteBtn").style.display=isEdit?"inline-block":"none";
  $("methodField").style.display=isEdit?"grid":"none";
- $("editorHint").textContent=isEdit?"PATCH/PUT · item_group_id dapat dikirim di body atau query string. Perubahan akan diterapkan pada product ini.":"POST · title dan item_group_id wajib. variants harus berupa array; setiap variant wajib memiliki id.";
+ $("editorHint").textContent=isEdit?"PATCH · item_group_id adalah identitas tetap dan tidak dapat diubah saat Edit. Setiap variant wajib memiliki id.":"POST · title dan item_group_id wajib. variants harus berupa array; setiap variant wajib memiliki id.";
  $("productJson").value=JSON.stringify(isEdit?state.editing:{title:"",description:null,brand:null,gtin:null,mpn:null,item_group_id:"",availability:"in stock",condition:"new",quantity_to_sell_on_facebook:null,expiration_date:null,link:null,google_product_category:null,product_type:null,rich_text_description:null,custom_label_0:null,sale_price_effective_date:null,variants:[]},null,2);
- $("updateMethod").value="PATCH";$("editorOverlay").classList.add("open");
+ $("editorOverlay").classList.add("open");
+}
+const PRODUCT_FIELDS=new Set(["title","description","brand","gtin","mpn","item_group_id","availability","condition","quantity_to_sell_on_facebook","expiration_date","link","google_product_category","product_type","rich_text_description","custom_label_0","sale_price_effective_date","variants"]);
+const VARIANT_FIELDS=new Set(["id","size","color","price","image_link","sale_price","additional_image_link"]);
+function validateProduct(data,isEdit){
+ const unknown=Object.keys(data).filter(key=>!PRODUCT_FIELDS.has(key));
+ if(unknown.length)throw new Error("Field product tidak didukung crud-products: "+unknown.join(", "));
+ if(!isEdit&&(typeof data.title!=="string"||!data.title.trim()))throw new Error("title wajib berupa string yang tidak kosong.");
+ if(!isEdit&&(typeof data.item_group_id!=="string"||!data.item_group_id.trim()))throw new Error("item_group_id wajib berupa string yang tidak kosong.");
+ if(isEdit&&data.item_group_id!==state.editing.item_group_id)throw new Error("item_group_id tidak dapat diubah saat Edit.");
+ if(data.quantity_to_sell_on_facebook!==undefined&&data.quantity_to_sell_on_facebook!==null&&(!Number.isInteger(data.quantity_to_sell_on_facebook)||data.quantity_to_sell_on_facebook<0))throw new Error("quantity_to_sell_on_facebook harus integer non-negatif atau null.");
+ if(data.variants!==undefined&&data.variants!==null){
+  if(!Array.isArray(data.variants))throw new Error("variants harus berupa array atau null.");
+  data.variants.forEach((variant,index)=>{
+   const prefix="variants["+index+"]";
+   if(!variant||Array.isArray(variant)||typeof variant!=="object")throw new Error(prefix+" harus berupa object.");
+   const extra=Object.keys(variant).filter(key=>!VARIANT_FIELDS.has(key));
+   if(extra.length)throw new Error(prefix+" memiliki field tidak didukung: "+extra.join(", "));
+   if(typeof variant.id!=="string"||!variant.id.trim())throw new Error(prefix+".id wajib berupa string yang tidak kosong.");
+   ["size","color","image_link"].forEach(key=>{if(variant[key]!==undefined&&variant[key]!==null&&typeof variant[key]!=="string")throw new Error(prefix+"."+key+" harus string atau null.");});
+   ["price","sale_price"].forEach(key=>{if(variant[key]!==undefined&&variant[key]!==null&&(typeof variant[key]!=="number"||!Number.isFinite(variant[key])))throw new Error(prefix+"."+key+" harus angka finite atau null.");});
+   if(variant.additional_image_link!==undefined&&variant.additional_image_link!==null&&(!Array.isArray(variant.additional_image_link)||variant.additional_image_link.some(url=>typeof url!=="string")))throw new Error(prefix+".additional_image_link harus array string atau null.");
+  });
+ }
 }
 async function saveProduct(){
  let data;try{data=JSON.parse($("productJson").value)}catch(e){toast("JSON tidak valid: "+e.message);return}
  if(!data||Array.isArray(data)||typeof data!=="object"){toast("Product JSON harus berupa object.");return}
  const isEdit=!!state.editing;const id=state.editing?.item_group_id;
+ try{validateProduct(data,isEdit)}catch(e){toast(e.message);return}
  $("saveBtn").disabled=true;
  try{
  if(isEdit){
- const method=$("updateMethod").value;
- await request(method,apiUrl({item_group_id:id}),data);
+ await request("PATCH",apiUrl({item_group_id:id}),data);
  toast("Product updated successfully.");
  }else{
  await request("POST",config.endpoint,data);toast("Product created successfully.");
