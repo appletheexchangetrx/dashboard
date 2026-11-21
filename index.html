@@ -346,11 +346,29 @@ async function saveEditPage(){
  const form=$("editProductForm");if(!form.reportValidity())return;
  const data=readEditForm(),id=state.editing?.item_group_id;
  try{await uploadExternalVariantImages(data);validateProduct(data,true)}catch(e){toast(e.message);return}
- $("editPageSaveBtn").disabled=true;
+ const button=$("editPageSaveBtn"),originalLabel=button.textContent;
+ button.disabled=true;button.textContent="Saving...";
  try{
-  await request("PATCH",apiUrl({item_group_id:id}),data);
-  toast("Product updated successfully.");closeEditPage();await load();
- }catch(e){toast(e.message)}finally{$("editPageSaveBtn").disabled=false}
+  const response=await request("PATCH",apiUrl({item_group_id:id}),data);
+  let saved=response.data&&typeof response.data==="object"&&!Array.isArray(response.data)?response.data:null;
+  if(!saved||!Array.isArray(saved.variants)){
+   try{
+    const latest=await request("GET",apiUrl({item_group_id:id,page:1,limit:1}));
+    const rows=Array.isArray(latest.data)?latest.data:[];
+    saved=rows.find(product=>product.item_group_id===id)||saved;
+   }catch{}
+  }
+  if(!saved)saved={...data};
+  else saved={...data,...saved};
+  state.editing=saved;
+  const productIndex=state.products.findIndex(product=>product.item_group_id===id);
+  if(productIndex>=0)state.products[productIndex]=saved;
+  renderEditForm(productForEdit(saved));
+  $("editPageTitle").textContent="Edit product";
+  $("editPageSubtitle").textContent=(saved.title||"Untitled product")+" · "+(saved.item_group_id||"");
+  render();
+  toast("Product updated successfully. Form refreshed.");
+ }catch(e){toast(e.message)}finally{button.disabled=false;button.textContent=originalLabel}
 }
 function openEditor(index){
  const isEdit=index!==undefined;state.editing=isEdit?state.products[index]:null;
