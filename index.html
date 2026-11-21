@@ -277,7 +277,7 @@ function renderVariantManager(){
   if(c.uploading)action='<button class="btn" type="button" disabled>Uploading...</button>';
   else if(c.image_link&&isProductsBucketUrl(c.image_link))action='<span class="variant-manager-help">✓ Uploaded to products</span>';
   else if(c.image_link&&(c.image_link.trim().startsWith("http://")||c.image_link.trim().startsWith("https://")))action='<button class="btn" type="button" data-upload-color-image="'+esc(c.key)+'">↥ Upload to bucket</button>';
-  return '<div class="variant-color-card" data-color-card="'+esc(c.key)+'"><div class="variant-color-card-head"><strong style="font-size:11px">Color '+(i+1)+'</strong><button class="icon-btn" type="button" data-remove-color="'+esc(c.key)+'">Remove</button></div><div class="field"><label>Color name</label><input data-color-field="color" value="'+esc(c.color)+'" placeholder="e.g. Cosmic Orange"></div><div class="field"><label>Image URL (image_link)</label><input data-color-field="image_link" type="url" value="'+esc(c.image_link)+'" placeholder="https://..."></div><div class="variant-manager-title">'+action+'</div><div class="field"><label>Additional images (one URL per line)</label><textarea data-color-field="additional_image_link" placeholder="https://...">'+esc(c.additional_image_link)+'</textarea></div></div>';
+  return '<div class="variant-color-card" data-color-card="'+esc(c.key)+'"><div class="variant-color-card-head"><strong style="font-size:11px">Color '+(i+1)+'</strong><button class="icon-btn" type="button" data-remove-color="'+esc(c.key)+'">Remove</button></div><div class="field"><label>Color name</label><input data-color-field="color" value="'+esc(c.color)+'" placeholder="e.g. Cosmic Orange"></div><div class="field"><label>Image URL (image_link)</label><input data-color-field="image_link" type="url" value="'+esc(c.image_link)+'" placeholder="https://..."></div><div class="variant-manager-title" data-color-upload-action>'+action+'</div><div class="field"><label>Additional images (one URL per line)</label><textarea data-color-field="additional_image_link" placeholder="https://...">'+esc(c.additional_image_link)+'</textarea></div></div>';
 }).join("");
  const sizeHtml=vm.sizes.map((s,i)=>'<div class="variant-size-row" data-size-row="'+esc(s.key)+'"><div class="field"><label>Size '+(i+1)+'</label><input data-size-field="size" value="'+esc(s.size)+'" placeholder="e.g. 256GB"></div><div class="field"><label>Price</label><input data-size-field="price" type="number" step="any" value="'+esc(s.price)+'"></div><div class="field"><label>Sale price</label><input data-size-field="sale_price" type="number" step="any" value="'+esc(s.sale_price)+'"></div><button class="icon-btn" type="button" data-remove-size="'+esc(s.key)+'" aria-label="Remove size">×</button></div>').join("");
  const conflictHtml=vm.conflicts.length?'<div class="variant-conflict"><strong>Perlu diperiksa:</strong> '+[...new Set(vm.conflicts)].map(esc).join("<br>")+'<br>Nilai dari variant pertama digunakan. Periksa nilai bersama sebelum menyimpan.</div>':"";
@@ -468,6 +468,18 @@ $("backToProductsBtn").addEventListener("click",closeEditPage);
 $("editPageCancelBtn").addEventListener("click",closeEditPage);
 $("editPageSaveBtn").addEventListener("click",saveEditPage);
 $("editPageDeleteBtn").addEventListener("click",deleteProduct);
+$("variantFields").addEventListener("input",e=>{
+ const input=e.target.closest('[data-color-field="image_link"]');
+ if(!input)return;
+ const card=input.closest("[data-color-card]");
+ const action=card?.querySelector("[data-color-upload-action]");
+ if(!action)return;
+ const url=input.value.trim();
+ if(!url){action.innerHTML="";return}
+ if(isProductsBucketUrl(url)){action.innerHTML='<span class="variant-manager-help">✓ Uploaded to products</span>';return}
+ let valid=false;try{const parsed=new URL(url);valid=parsed.protocol==="http:"||parsed.protocol==="https:"}catch{}
+ action.innerHTML=valid?'<button class="btn" type="button" data-upload-color-image="'+esc(card.dataset.colorCard)+'">↥ Upload to bucket</button>':"";
+});
 $("variantFields").addEventListener("click",e=>{
  const uploadBtn=e.target.closest("[data-upload-color-image]");if(uploadBtn){uploadColorImage(uploadBtn.dataset.uploadColorImage);return}
  if(e.target.closest("[data-add-color]")){addColorGroup();return}
