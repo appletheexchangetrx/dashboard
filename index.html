@@ -247,7 +247,7 @@ function closeEditPage(){
 async function saveEditPage(){
  const form=$("editProductForm");if(!form.reportValidity())return;
  const data=readEditForm(),id=state.editing?.item_group_id;
- try{validateProduct(data,true)}catch(e){toast(e.message);return}
+ try{await uploadExternalVariantImages(data);validateProduct(data,true)}catch(e){toast(e.message);return}
  $("editPageSaveBtn").disabled=true;
  try{
   await request("PATCH",apiUrl({item_group_id:id}),data);
@@ -267,6 +267,44 @@ function openEditor(index){
 }
 const PRODUCT_FIELDS=new Set(["title","description","brand","gtin","mpn","item_group_id","availability","condition","quantity_to_sell_on_facebook","expiration_date","link","google_product_category","product_type","rich_text_description","custom_label_0","sale_price_effective_date","variants"]);
 const VARIANT_FIELDS=new Set(["id","size","color","price","image_link","sale_price","additional_image_link"]);
+const imageUploadJobs=new Map();
+const PRODUCTS_UPLOAD_ENDPOINT=DEFAULT_ENDPOINT+"?action=upload";
+function isProductsBucketUrl(value){
+ try{return new URL(value).pathname.includes("/storage/v1/object/public/products/")}catch{return false}
+}
+async function uploadImageUrl(imageUrl,itemGroupId){
+ const normalized=new URL(imageUrl);
+ if(!["http:","https:"].includes(normalized.protocol))throw new Error("URL gambar harus menggunakan HTTP atau HTTPS.");
+ if(isProductsBucketUrl(imageUrl))return imageUrl;
+ if(imageUploadJobs.has(imageUrl))return imageUploadJobs.get(imageUrl);
+ const job=(async()=>{
+  const source=await fetch(normalized.href,{mode:"cors"});
+  if(!source.ok)throw new Error("Gagal mengambil gambar dari URL (HTTP "+source.status+").");
+  const blob=await source.blob();
+  const allowed=["image/jpeg","image/png","image/webp","image/avif"];
+  if(!allowed.includes(blob.type))throw new Error("Format gambar harus JPEG, PNG, WebP, atau AVIF.");
+  if(!blob.size||blob.size>5*1024*1024)throw new Error("Ukuran gambar harus 1 byte–5 MB.");
+  const ext={"image/jpeg":"jpg","image/png":"png","image/webp":"webp","image/avif":"avif"}[blob.type];
+  const file=new File([blob],"product-image."+ext,{type:blob.type});
+  const form=new FormData();form.append("file",file);
+  if(itemGroupId)form.append("item_group_id",itemGroupId);
+  const response=await fetch(PRODUCTS_UPLOAD_ENDPOINT,{method:"POST",body:form});
+  const result=await response.json().catch(()=>({}));
+  if(!response.ok||result.success!==true||!result.data?.public_url)throw new Error(result.error||"Upload gambar ke bucket products gagal.");
+  return result.data.public_url;
+ })();
+ imageUploadJobs.set(imageUrl,job);
+ try{return await job}catch(error){imageUploadJobs.delete(imageUrl);throw error}
+}
+async function uploadExternalVariantImages(product){
+ if(!Array.isArray(product.variants))return product;
+ for(const variant of product.variants){
+  if(variant&&typeof variant.image_link==="string"&&variant.image_link.trim()&&!isProductsBucketUrl(variant.image_link)){
+   variant.image_link=await uploadImageUrl(variant.image_link.trim(),product.item_group_id);
+  }
+ }
+ return product;
+}
 function productForEdit(product){return Object.fromEntries([...PRODUCT_FIELDS].filter(key=>Object.prototype.hasOwnProperty.call(product,key)).map(key=>[key,product[key]]));}
 function validateProduct(data,isEdit){
  const unknown=Object.keys(data).filter(key=>!PRODUCT_FIELDS.has(key));
@@ -293,7 +331,7 @@ async function saveProduct(){
  let data;try{data=JSON.parse($("productJson").value)}catch(e){toast("JSON tidak valid: "+e.message);return}
  if(!data||Array.isArray(data)||typeof data!=="object"){toast("Product JSON harus berupa object.");return}
  const isEdit=!!state.editing;const id=state.editing?.item_group_id;
- try{validateProduct(data,isEdit)}catch(e){toast(e.message);return}
+ try{await uploadExternalVariantImages(data);validateProduct(data,isEdit)}catch(e){toast(e.message);return}
  $("saveBtn").disabled=true;
  try{
  if(isEdit){
@@ -326,6 +364,16 @@ $("editPageCancelBtn").addEventListener("click",closeEditPage);
 $("editPageSaveBtn").addEventListener("click",saveEditPage);
 $("editPageDeleteBtn").addEventListener("click",deleteProduct);
 $("addVariantBtn").addEventListener("click",()=>addVariantCard());
+$("variantFields").addEventListener("paste",async e=>{
+ const input=e.target.closest('[data-variant-field="image_link"]');if(!input)return;
+ const pasted=(e.clipboardData||window.clipboardData)?.getData("text")?.trim();if(!pasted)return;
+ let parsed;try{parsed=new URL(pasted)}catch{return}
+ if(!["http:","https:"].includes(parsed.protocol)||isProductsBucketUrl(pasted))return;
+ e.preventDefault();input.value=pasted;input.disabled=true;toast("Mengunggah gambar ke bucket products…");
+ try{input.value=await uploadImageUrl(pasted,state.editing?.item_group_id);toast("Gambar berhasil diunggah. image_link diperbarui.");}
+ catch(error){toast("Upload gambar gagal: "+error.message+" URL asli dipertahankan.");}
+ finally{input.disabled=false}
+});
 $("variantFields").addEventListener("click",e=>{const btn=e.target.closest("[data-remove-variant]");if(!btn)return;btn.closest(".variant-card").remove();renumberVariants();if(!$("variantFields").querySelector(".variant-card"))$("variantFields").innerHTML='<div class="variant-empty">Belum ada variant. Klik “Add variant” untuk menambahkan.</div>'});
 $("refreshBtn").addEventListener("click",load);
 $("saveBtn").addEventListener("click",saveProduct);
