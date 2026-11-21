@@ -215,9 +215,17 @@ async function saveProduct(){
 async function deleteProduct(){
  if(!state.editing)return;const id=state.editing.item_group_id;
  if(!confirm('Delete product "'+(state.editing.title||id)+'"? This action cannot be undone.'))return;
- $("deleteBtn").disabled=true;
- try{await request("DELETE",apiUrl({item_group_id:id}));$("editorOverlay").classList.remove("open");toast("Product deleted.");if(state.products.length===1&&state.page>1)state.page--;await load()}
- catch(e){toast(e.message)}finally{$("deleteBtn").disabled=false}
+ const pageDelete=$("editPage").classList.contains("active");
+ const deleteButton=pageDelete?$("editPageDeleteBtn"):$("deleteBtn");
+ deleteButton.disabled=true;
+ try{
+  await request("DELETE",apiUrl({item_group_id:id}));
+  $("editorOverlay").classList.remove("open");
+  if(pageDelete)closeEditPage();
+  toast("Product deleted.");
+  if(state.products.length===1&&state.page>1)state.page--;
+  await load();
+ }catch(e){toast(e.message)}finally{deleteButton.disabled=false}
 }
 $("addBtn").addEventListener("click",()=>openEditor());
 $("backToProductsBtn").addEventListener("click",closeEditPage);
