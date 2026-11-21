@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#f6f7fb">
+<title>Products Dashboard</title>
+<style>
+:root{font-family:Inter,"Plus Jakarta Sans",system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#172033;background:#f6f7fb;font-synthesis:none;text-rendering:optimizeLegibility}
+*{box-sizing:border-box}body{margin:0}button,input,select,textarea{font:inherit}button{cursor:pointer}
+.shell{max-width:1440px;margin:auto;padding:30px clamp(16px,3vw,42px) 56px}
+.top{display:flex;align-items:center;justify-content:space-between;gap:18px;margin-bottom:28px}
+.brand{display:flex;align-items:center;gap:13px}.mark{width:42px;height:42px;border-radius:13px;background:#172033;color:white;display:grid;place-items:center;font-weight:800;font-size:18px}
+h1{font-size:22px;letter-spacing:-.6px;margin:0}.sub{font-size:13px;color:#788297;margin-top:4px}
+.actions{display:flex;gap:9px;flex-wrap:wrap}.btn{border:1px solid #e1e5ed;background:white;color:#263149;border-radius:10px;padding:10px 14px;font-size:13px;font-weight:650;transition:.15s}.btn:hover{border-color:#aab4c5;transform:translateY(-1px)}.btn.primary{background:#315efb;color:white;border-color:#315efb}.btn.danger{color:#c43838;border-color:#f0d1d1}.btn:disabled{opacity:.45;cursor:not-allowed;transform:none}
+.stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-bottom:18px}.stat,.panel{background:white;border:1px solid #e8ebf1;border-radius:15px}.stat{padding:17px 19px}.stat-label{font-size:12px;color:#7a8498}.stat-value{font-size:23px;font-weight:750;letter-spacing:-.7px;margin-top:7px}.stat-note{font-size:11px;color:#9aa3b2;margin-top:3px}
+.panel{overflow:hidden}.toolbar{padding:16px;display:flex;align-items:center;gap:10px;border-bottom:1px solid #edf0f4;flex-wrap:wrap}.search{position:relative;flex:1;min-width:210px}.search input{width:100%;padding:10px 12px 10px 36px}.search span{position:absolute;left:12px;top:9px;color:#8993a5}
+input,select,textarea{border:1px solid #dfe4ec;border-radius:9px;padding:10px 11px;color:#263149;background:white;outline:none;font-size:13px}input:focus,select:focus,textarea:focus{border-color:#7892ff;box-shadow:0 0 0 3px #315efb16}
+.table-wrap{overflow:auto}table{width:100%;border-collapse:collapse;min-width:760px}th{text-align:left;background:#fbfcfe;color:#8590a3;font-size:11px;text-transform:uppercase;letter-spacing:.055em;font-weight:700;padding:12px 17px;border-bottom:1px solid #edf0f4}td{padding:14px 17px;border-bottom:1px solid #f0f2f6;font-size:13px;vertical-align:middle}tbody tr:hover{background:#fcfdff}.prod-title{font-weight:700;color:#202b40}.muted{color:#8993a5;font-size:12px;margin-top:4px}.pill{display:inline-flex;border-radius:99px;padding:5px 9px;background:#f0f3f8;color:#59657a;font-size:11px;font-weight:650}.pill.in{background:#eaf7ef;color:#23834b}.pill.out{background:#fff1e9;color:#b65c27}.row-actions{display:flex;gap:6px}.icon-btn{border:1px solid #e7eaf0;background:white;border-radius:8px;padding:7px 9px;color:#526078;font-size:12px}.empty{padding:52px 20px;text-align:center;color:#8791a3;font-size:13px}.footer{padding:13px 16px;display:flex;align-items:center;justify-content:space-between;gap:10px;color:#8590a3;font-size:12px}
+.status{display:flex;align-items:center;gap:8px;font-size:12px;color:#748096}.dot{width:7px;height:7px;border-radius:50%;background:#c4cad4}.dot.ok{background:#28a765}.dot.err{background:#d34b4b}
+.notice{display:none;margin:0 0 15px;padding:11px 14px;border-radius:10px;background:#fff4e8;color:#98601e;font-size:12px;line-height:1.5}.notice.show{display:block}
+.overlay{position:fixed;inset:0;background:#10182775;display:none;align-items:center;justify-content:center;padding:18px;z-index:10}.overlay.open{display:flex}.dialog{width:min(760px,100%);max-height:min(90vh,900px);overflow:auto;background:white;border-radius:17px;box-shadow:0 24px 80px #0c173333}.dialog-head{padding:19px 22px;border-bottom:1px solid #edf0f4;display:flex;align-items:center;justify-content:space-between}.dialog-head h2{margin:0;font-size:17px}.dialog-body{padding:20px 22px}.dialog-foot{padding:15px 22px;border-top:1px solid #edf0f4;display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap}.field{display:grid;gap:7px;margin-bottom:14px}.field label{font-size:12px;font-weight:700;color:#4d5870}.field small{font-size:11px;color:#8b95a7}.field textarea{width:100%;min-height:330px;resize:vertical;font:12px/1.55 ui-monospace,SFMono-Regular,Consolas,monospace;tab-size:2}.config-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.config-grid .field{margin:0}.help{font-size:11px;color:#8b95a7;line-height:1.55;margin-top:13px}.toast{position:fixed;right:20px;bottom:20px;z-index:20;padding:12px 16px;background:#172033;color:white;border-radius:10px;font-size:12px;box-shadow:0 10px 30px #17203330;display:none;max-width:min(420px,calc(100vw - 40px))}.toast.show{display:block}
+@media(max-width:650px){.shell{padding-top:20px}.top{align-items:flex-start;flex-direction:column}.actions{width:100%}.actions .btn{flex:1}.stats{gap:8px}.stat{padding:13px}.stat-value{font-size:19px}.toolbar{padding:12px}.footer{align-items:flex-start;flex-direction:column}.config-grid{grid-template-columns:1fr}.dialog-body{padding:16px}.dialog-head,.dialog-foot{padding:15px 16px}}
+</style>
+</head>
+<body>
+<div class="shell">
+<header class="top">
+  <div class="brand"><div class="mark">P</div><div><h1>Products Dashboard</h1><div class="sub">Admin CRUD · Supabase Edge Function</div></div></div>
+  <div class="actions"><button class="btn" id="settingsBtn">API Settings</button><button class="btn" id="refreshBtn">↻ Refresh</button><button class="btn primary" id="addBtn">＋ Add product</button></div>
+</header>
+<div class="notice show" id="securityNotice">Endpoint CRUD ini bersifat publik. Dashboard menggunakan publishable key yang aman untuk browser; jangan pernah memasukkan service_role atau secret key di sini.</div>
+<section class="stats">
+  <div class="stat"><div class="stat-label">Total products</div><div class="stat-value" id="totalStat">—</div><div class="stat-note">Jumlah record dari API</div></div>
+  <div class="stat"><div class="stat-label">Products on this page</div><div class="stat-value" id="pageStat">—</div><div class="stat-note">Data yang sedang ditampilkan</div></div>
+  <div class="stat"><div class="stat-label">API connection</div><div class="stat-value" style="font-size:16px" id="connectionStat">Not checked</div><div class="stat-note" id="connectionNote">Hubungkan untuk memuat data</div></div>
+</section>
+<section class="panel">
+  <div class="toolbar">
+    <div class="search"><span>⌕</span><input id="searchInput" placeholder="Search title, description, or brand…" autocomplete="off"></div>
+    <select id="limitSelect" aria-label="Rows per page"><option value="10">10 / page</option><option value="20" selected>20 / page</option><option value="50">50 / page</option><option value="100">100 / page</option></select>
+    <select id="sortSelect" aria-label="Sort by"><option value="created_at">Newest</option><option value="updated_at">Recently updated</option><option value="title">Title</option><option value="item_group_id">Item group ID</option></select>
+    <select id="orderSelect" aria-label="Sort order"><option value="desc">Descending</option><option value="asc">Ascending</option></select>
+  </div>
+  <div class="table-wrap"><table><thead><tr><th>Product</th><th>Item group ID</th><th>Availability</th><th>Variants</th><th>Updated</th><th>Actions</th></tr></thead><tbody id="productRows"><tr><td colspan="6" class="empty">Loading products…</td></tr></tbody></table></div>
+  <div class="footer"><div id="rangeText">—</div><div class="actions"><button class="btn" id="prevBtn">← Previous</button><button class="btn" id="nextBtn">Next →</button></div></div>
+</section>
+<p class="help">Data ditampilkan langsung dari endpoint <code>get-products</code>. Perubahan disimpan ke database melalui Edge Function. Gunakan Edit JSON untuk mengatur seluruh field product dan variants sesuai schema API.</p>
+</div>
+
+<div class="overlay" id="editorOverlay" role="dialog" aria-modal="true" aria-labelledby="editorTitle">
+<div class="dialog"><div class="dialog-head"><h2 id="editorTitle">Add product</h2><button class="icon-btn" data-close="editorOverlay">✕</button></div>
+<div class="dialog-body"><div class="field"><label for="productJson">Product JSON</label><textarea id="productJson" spellcheck="false"></textarea><small id="editorHint">POST · title dan item_group_id wajib. variants harus berupa array; setiap variant wajib memiliki id.</small></div><div class="field" id="methodField"><label for="updateMethod">Update method</label><select id="updateMethod"><option value="PATCH">PATCH (recommended)</option><option value="PUT">PUT</option></select></div><div class="help">Field product: title, description, brand, gtin, mpn, item_group_id, availability, condition, quantity_to_sell_on_facebook, expiration_date, link, google_product_category, product_type, rich_text_description, custom_label_0, sale_price_effective_date, variants. Variant: id, size, color, price, image_link, sale_price, additional_image_link.</div></div>
+<div class="dialog-foot"><button class="btn danger" id="deleteBtn" style="display:none">Delete product</button><div class="actions"><button class="btn" data-close="editorOverlay">Cancel</button><button class="btn primary" id="saveBtn">Create product</button></div></div></div>
+</div>
+
+<div class="overlay" id="settingsOverlay" role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
+<div class="dialog"><div class="dialog-head"><h2 id="settingsTitle">API Settings</h2><button class="icon-btn" data-close="settingsOverlay">✕</button></div>
+<div class="dialog-body"><div class="config-grid">
+<div class="field"><label for="endpointInput">Edge Function URL</label><input id="endpointInput" type="url"></div>
+<div class="field"><label for="keyInput">Publishable / anon key</label><input id="keyInput" type="password" autocomplete="off"></div>
+</div><p class="help">Key publishable/anon boleh digunakan di browser. Jangan masukkan service_role atau secret key. Pengaturan disimpan di localStorage browser ini.</p></div>
+<div class="dialog-foot"><span></span><div class="actions"><button class="btn" data-close="settingsOverlay">Cancel</button><button class="btn primary" id="saveSettingsBtn">Save settings</button></div></div></div>
+</div>
+<div class="toast" id="toast"></div>
+<script>
+(() => {
+const DEFAULT_ENDPOINT = "https://axednjikcambzbkxyqpp.supabase.co/functions/v1/get-products";
+const DEFAULT_KEY = "sb_publishable_Vysddy5_b0uZ3iKgnkDTIw_X5O1pBEd";
+const $ = id => document.getElementById(id);
+const state = {page:1,limit:20,total:0,totalPages:0,products:[],editing:null,searchTimer:null};
+const config = {
+ get endpoint(){return localStorage.getItem("products_api_endpoint") || DEFAULT_ENDPOINT},
+ get key(){return localStorage.getItem("products_api_key") || DEFAULT_KEY}
+};
+function toast(message){const el=$("toast");el.textContent=message;el.classList.add("show");clearTimeout(toast.timer);toast.timer=setTimeout(()=>el.classList.remove("show"),3400)}
+function setConnection(ok,note){$("connectionStat").textContent=ok?"Connected":"Error";$("connectionNote").textContent=note;$("connectionStat").style.color=ok?"#23834b":"#c43838"}
+function apiUrl(params={}){const u=new URL(config.endpoint);Object.entries(params).forEach(([k,v])=>{if(v!==undefined&&v!==null&&v!=="")u.searchParams.set(k,v)});return u.toString()}
+async function request(method,url,body){
+ if(!config.key)throw new Error("Publishable key belum diatur. Buka API Settings.");
+ const headers={"apikey":config.key,"Content-Type":"application/json"};
+ const options={method,headers};if(body!==undefined)options.body=JSON.stringify(body);
+ const response=await fetch(url,options);let result;
+ const raw=await response.text();try{result=raw?JSON.parse(raw):{}}catch{result={raw}};
+ if(!response.ok||result.success===false)throw new Error(result.error||result.message||("HTTP "+response.status));
+ return result;
+}
+function esc(v){return String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+function date(v){if(!v)return "—";const d=new Date(v);return Number.isNaN(d.getTime())?"—":d.toLocaleDateString("id-ID",{day:"2-digit",month:"short",year:"numeric"})}
+function render(){
+ const rows=$("productRows");$("totalStat").textContent=state.total.toLocaleString("id-ID");$("pageStat").textContent=state.products.length;
+ if(!state.products.length){rows.innerHTML='<tr><td colspan="6" class="empty">No products found. Add your first product or change the search.</td></tr>'}
+ else rows.innerHTML=state.products.map((p,i)=>{
+ const availability=(p.availability||"—").toLowerCase();const pill=availability==="in stock"?"in":availability==="out of stock"?"out":"";
+ return '<tr><td><div class="prod-title">'+esc(p.title||"(Untitled product)")+'</div><div class="muted">'+esc(p.brand||"No brand")+'</div></td><td><code>'+esc(p.item_group_id||"—")+'</code></td><td><span class="pill '+pill+'">'+esc(p.availability||"Not set")+'</span></td><td>'+((Array.isArray(p.variants)?p.variants.length:0).toString())+'</td><td>'+date(p.updated_at||p.created_at)+'</td><td><div class="row-actions"><button class="icon-btn" data-edit="'+i+'">Edit JSON</button><button class="icon-btn" data-view="'+i+'">View</button></div></td></tr>';
+ }).join("");
+ const start=state.total?((state.page-1)*state.limit+1):0,end=Math.min(state.page*state.limit,state.total);
+ $("rangeText").textContent="Showing "+start+"–"+end+" of "+state.total;
+ $("prevBtn").disabled=state.page<=1;$("nextBtn").disabled=!state.totalPages||state.page>=state.totalPages;
+}
+async function load(){
+ $("productRows").innerHTML='<tr><td colspan="6" class="empty">Loading products…</td></tr>';
+ $("refreshBtn").disabled=true;
+ try{
+ const result=await request("GET",apiUrl({page:state.page,limit:state.limit,search:$("searchInput").value.trim(),sort:$("sortSelect").value,order:$("orderSelect").value}));
+ state.products=Array.isArray(result.data)?result.data:[];const pg=result.pagination||{};
+ state.total=Number(pg.total??state.products.length);state.totalPages=Number(pg.total_pages??Math.ceil(state.total/state.limit));
+ setConnection(true,"Last synced "+new Date().toLocaleTimeString("id-ID",{hour:"2-digit",minute:"2-digit"}));render();
+ }catch(e){state.products=[];render();$("productRows").innerHTML='<tr><td colspan="6" class="empty">Could not load products: '+esc(e.message)+'</td></tr>';setConnection(false,e.message);toast(e.message)}
+ finally{$("refreshBtn").disabled=false}
+}
+function openEditor(index){
+ const isEdit=index!==undefined;state.editing=isEdit?state.products[index]:null;
+ $("editorTitle").textContent=isEdit?"Edit product":"Add product";
+ $("saveBtn").textContent=isEdit?"Save changes":"Create product";
+ $("deleteBtn").style.display=isEdit?"inline-block":"none";
+ $("methodField").style.display=isEdit?"grid":"none";
+ $("editorHint").textContent=isEdit?"PATCH/PUT · item_group_id dapat dikirim di body atau query string. Perubahan akan diterapkan pada product ini.":"POST · title dan item_group_id wajib. variants harus berupa array; setiap variant wajib memiliki id.";
+ $("productJson").value=JSON.stringify(isEdit?state.editing:{title:"",description:null,brand:null,gtin:null,mpn:null,item_group_id:"",availability:"in stock",condition:"new",quantity_to_sell_on_facebook:null,expiration_date:null,link:null,google_product_category:null,product_type:null,rich_text_description:null,custom_label_0:null,sale_price_effective_date:null,variants:[]},null,2);
+ $("updateMethod").value="PATCH";$("editorOverlay").classList.add("open");
+}
+async function saveProduct(){
+ let data;try{data=JSON.parse($("productJson").value)}catch(e){toast("JSON tidak valid: "+e.message);return}
+ if(!data||Array.isArray(data)||typeof data!=="object"){toast("Product JSON harus berupa object.");return}
+ const isEdit=!!state.editing;const id=state.editing?.item_group_id;
+ $("saveBtn").disabled=true;
+ try{
+ if(isEdit){
+ const method=$("updateMethod").value;
+ await request(method,apiUrl({item_group_id:id}),data);
+ toast("Product updated successfully.");
+ }else{
+ await request("POST",config.endpoint,data);toast("Product created successfully.");
+ }
+ $("editorOverlay").classList.remove("open");await load();
+ }catch(e){toast(e.message)}finally{$("saveBtn").disabled=false}
+}
+async function deleteProduct(){
+ if(!state.editing)return;const id=state.editing.item_group_id;
+ if(!confirm('Delete product "'+(state.editing.title||id)+'"? This action cannot be undone.'))return;
+ $("deleteBtn").disabled=true;
+ try{await request("DELETE",apiUrl({item_group_id:id}));$("editorOverlay").classList.remove("open");toast("Product deleted.");if(state.products.length===1&&state.page>1)state.page--;await load()}
+ catch(e){toast(e.message)}finally{$("deleteBtn").disabled=false}
+}
+function openSettings(){$("endpointInput").value=config.endpoint;$("keyInput").value=config.key;$("settingsOverlay").classList.add("open")}
+$("settingsBtn").addEventListener("click",openSettings);
+$("saveSettingsBtn").addEventListener("click",()=>{
+ const endpoint=$("endpointInput").value.trim(),key=$("keyInput").value.trim();
+ try{new URL(endpoint)}catch{toast("URL endpoint tidak valid.");return}
+ if(!/^https:\/\//i.test(endpoint)){toast("Endpoint harus menggunakan HTTPS.");return}
+ if(key.toLowerCase().includes("service_role")||key.toLowerCase().includes("secret")){toast("Jangan gunakan service_role atau secret key.");return}
+ localStorage.setItem("products_api_endpoint",endpoint);localStorage.setItem("products_api_key",key);
+ $("settingsOverlay").classList.remove("open");state.page=1;load();toast("API settings saved.");
+});
+$("addBtn").addEventListener("click",()=>openEditor());
+$("refreshBtn").addEventListener("click",load);
+$("saveBtn").addEventListener("click",saveProduct);
+$("deleteBtn").addEventListener("click",deleteProduct);
+$("prevBtn").addEventListener("click",()=>{if(state.page>1){state.page--;load()}});
+$("nextBtn").addEventListener("click",()=>{if(state.page<state.totalPages){state.page++;load()}});
+$("limitSelect").addEventListener("change",()=>{state.limit=Number($("limitSelect").value);state.page=1;load()});
+["sortSelect","orderSelect"].forEach(id=>$(id).addEventListener("change",()=>{state.page=1;load()}));
+$("searchInput").addEventListener("input",()=>{clearTimeout(state.searchTimer);state.searchTimer=setTimeout(()=>{state.page=1;load()},350)});
+document.querySelectorAll("[data-close]").forEach(btn=>btn.addEventListener("click",()=>$(btn.dataset.close).classList.remove("open")));
+document.querySelectorAll(".overlay").forEach(overlay=>overlay.addEventListener("click",e=>{if(e.target===overlay)overlay.classList.remove("open")}));
+$("productRows").addEventListener("click",e=>{const edit=e.target.closest("[data-edit]"),view=e.target.closest("[data-view]");if(edit)openEditor(Number(edit.dataset.edit));if(view){const p=state.products[Number(view.dataset.view)];$("editorTitle").textContent="View product";$("productJson").value=JSON.stringify(p,null,2);$("editorHint").textContent="Read-only preview. Close this dialog when finished.";$("saveBtn").style.display="none";$("deleteBtn").style.display="none";$("methodField").style.display="none";$("editorOverlay").classList.add("open");$("productJson").readOnly=true;}});
+$("editorOverlay").addEventListener("click",e=>{if(e.target.closest("[data-close]")||e.target===$("editorOverlay")){$("saveBtn").style.display="";$("productJson").readOnly=false}});
+load();
+})();
+</script>
+</body>
+</html>
