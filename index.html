@@ -2,526 +2,158 @@
 <html lang="id">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="theme-color" content="#f6f7fb">
-<title>Products Dashboard</title>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#f5f6f8">
+<meta name="description" content="Apple The Exchange TRX — Mobile Product Admin">
+<title>Apple TRX · Admin</title>
 <style>
-:root{font-family:Inter,"Plus Jakarta Sans",system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#172033;background:#f6f7fb;font-synthesis:none;text-rendering:optimizeLegibility}
-*{box-sizing:border-box}body{margin:0}button,input,select,textarea{font:inherit}button{cursor:pointer}
-.shell{max-width:1440px;margin:auto;padding:30px clamp(16px,3vw,42px) 56px}
-.top{display:flex;align-items:center;justify-content:space-between;gap:18px;margin-bottom:28px}
-.brand{display:flex;align-items:center;gap:13px}.mark{width:42px;height:42px;border-radius:13px;background:#172033;color:white;display:grid;place-items:center;font-weight:800;font-size:18px}
-h1{font-size:22px;letter-spacing:-.6px;margin:0}.sub{font-size:13px;color:#788297;margin-top:4px}
-.actions{display:flex;gap:9px;flex-wrap:wrap}.btn{border:1px solid #e1e5ed;background:white;color:#263149;border-radius:10px;padding:10px 14px;font-size:13px;font-weight:650;transition:.15s}.btn:hover{border-color:#aab4c5;transform:translateY(-1px)}.btn.primary{background:#315efb;color:white;border-color:#315efb}.btn.danger{color:#c43838;border-color:#f0d1d1}.btn:disabled{opacity:.45;cursor:not-allowed;transform:none}
-.stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-bottom:18px}.stat,.panel{background:white;border:1px solid #e8ebf1;border-radius:15px}.stat{padding:17px 19px}.stat-label{font-size:12px;color:#7a8498}.stat-value{font-size:23px;font-weight:750;letter-spacing:-.7px;margin-top:7px}.stat-note{font-size:11px;color:#9aa3b2;margin-top:3px}
-.panel{overflow:hidden}.toolbar{padding:16px;display:flex;align-items:center;gap:10px;border-bottom:1px solid #edf0f4;flex-wrap:wrap}.search{position:relative;flex:1;min-width:210px}.search input{width:100%;padding:10px 12px 10px 36px}.search span{position:absolute;left:12px;top:9px;color:#8993a5}
-input,select,textarea{border:1px solid #dfe4ec;border-radius:9px;padding:10px 11px;color:#263149;background:white;outline:none;font-size:13px}input:focus,select:focus,textarea:focus{border-color:#7892ff;box-shadow:0 0 0 3px #315efb16}
-.product-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:16px;padding:18px}.product-card{min-width:0;border:1px solid #e8ebf1;border-radius:14px;overflow:hidden;background:#fff;display:flex;flex-direction:column;transition:box-shadow .15s,transform .15s}.product-card:hover{transform:translateY(-2px);box-shadow:0 10px 28px #1720330d}.product-media{height:190px;background:#f5f7fa;display:grid;place-items:center;overflow:hidden}.product-media img{width:100%;height:100%;object-fit:contain}.media-placeholder{color:#a3adbd;font-size:12px}.product-content{padding:14px;display:flex;flex-direction:column;gap:8px;flex:1}.product-title{font-size:14px;line-height:1.45;font-weight:750;color:#202b40;overflow-wrap:anywhere}.product-brand{font-size:12px;color:#8993a5}.product-meta{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}.product-type{font-size:11px;color:#59657a;background:#f0f3f8;border-radius:99px;padding:5px 9px;max-width:100%;overflow-wrap:anywhere}.product-price{font-size:14px;font-weight:750;color:#202b40}.product-id{font-size:11px;color:#8993a5;overflow-wrap:anywhere}.product-actions{display:flex;gap:7px;margin-top:auto;padding-top:5px}.product-actions button{flex:1}.pill{display:inline-flex;border-radius:99px;padding:5px 9px;background:#f0f3f8;color:#59657a;font-size:11px;font-weight:650}.pill.in{background:#eaf7ef;color:#23834b}.pill.out{background:#fff1e9;color:#b65c27}.row-actions{display:flex;gap:6px}.icon-btn{border:1px solid #e7eaf0;background:white;border-radius:8px;padding:7px 9px;color:#526078;font-size:12px}.empty{padding:52px 20px;text-align:center;color:#8791a3;font-size:13px;grid-column:1/-1}.footer{padding:13px 16px;display:flex;align-items:center;justify-content:space-between;gap:10px;color:#8590a3;font-size:12px}
-.status{display:flex;align-items:center;gap:8px;font-size:12px;color:#748096}.dot{width:7px;height:7px;border-radius:50%;background:#c4cad4}.dot.ok{background:#28a765}.dot.err{background:#d34b4b}
-.notice{display:none;margin:0 0 15px;padding:11px 14px;border-radius:10px;background:#fff4e8;color:#98601e;font-size:12px;line-height:1.5}.notice.show{display:block}
-.update-notice{display:none;align-items:center;justify-content:space-between;gap:12px;background:#edf3ff;color:#294b9b;border:1px solid #d8e4ff}
-.update-notice.show{display:flex}
-.update-notice-text{font-size:12px;line-height:1.5}
-.update-notice .btn{white-space:nowrap;padding:7px 11px;font-size:12px}
-@media(max-width:520px){.update-notice{align-items:flex-start;flex-direction:column}.update-notice .btn{width:100%}}
-.edit-page{display:none;background:#fff;border:1px solid #e8ebf1;border-radius:15px;overflow:hidden}.edit-page.active{display:block}.edit-page-head{padding:19px 22px;border-bottom:1px solid #edf0f4;display:flex;align-items:center;justify-content:space-between;gap:12px}.edit-page-head h2{font-size:18px;margin:0}.edit-page-body{padding:22px}.form-section{margin-bottom:26px}.form-section h3{font-size:14px;margin:0 0 14px;color:#27334a}.edit-form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.edit-form-grid .field,.variant-grid .field{margin:0}.edit-form-grid .field.full{grid-column:1/-1}.edit-form-grid input,.edit-form-grid textarea,.variant-card input,.variant-card textarea{width:100%}.edit-form-grid textarea,.variant-card textarea{min-height:84px;resize:vertical}.edit-form-grid input[readonly]{background:#f4f6f9;color:#778196}.variant-heading{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px}.variant-heading h3{margin:0}.variant-heading p{font-size:12px;color:#8993a5;margin:5px 0 0}.variant-card{border:1px solid #e8ebf1;border-radius:12px;padding:14px;margin-bottom:10px}.variant-card-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;font-size:12px;font-weight:750}.variant-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.variant-identity{margin-bottom:14px}.variant-group{border-top:1px solid #edf0f4;padding-top:13px;margin-top:13px}.variant-group-title{font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:#66738a;margin:0 0 10px}.variant-empty{padding:18px;border:1px dashed #dce2eb;border-radius:10px;text-align:center;color:#8993a5;font-size:12px}.edit-page-foot{padding:15px 22px;border-top:1px solid #edf0f4;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}.edit-page-meta{font-size:12px;color:#8993a5;line-height:1.6}@media(max-width:650px){.edit-page-head,.edit-page-body,.edit-page-foot{padding:15px}.edit-form-grid,.variant-grid{grid-template-columns:1fr}.variant-heading{align-items:flex-start;flex-direction:column}}.overlay{position:fixed;inset:0;background:#10182775;display:none;align-items:center;justify-content:center;padding:18px;z-index:10}.overlay.open{display:flex}.dialog{width:min(760px,100%);max-height:min(90vh,900px);overflow:auto;background:white;border-radius:17px;box-shadow:0 24px 80px #0c173333}.dialog-head{padding:19px 22px;border-bottom:1px solid #edf0f4;display:flex;align-items:center;justify-content:space-between}.dialog-head h2{margin:0;font-size:17px}.dialog-body{padding:20px 22px}.dialog-foot{padding:15px 22px;border-top:1px solid #edf0f4;display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap}.field{display:grid;gap:7px;margin-bottom:14px}.field label{font-size:12px;font-weight:700;color:#4d5870}.field small{font-size:11px;color:#8b95a7}.field textarea{width:100%;min-height:330px;resize:vertical;font:12px/1.55 ui-monospace,SFMono-Regular,Consolas,monospace;tab-size:2}.config-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.config-grid .field{margin:0}.help{font-size:11px;color:#8b95a7;line-height:1.55;margin-top:13px}.toast{position:fixed;right:20px;bottom:20px;z-index:20;padding:12px 16px;background:#172033;color:white;border-radius:10px;font-size:12px;box-shadow:0 10px 30px #17203330;display:none;max-width:min(420px,calc(100vw - 40px))}.toast.show{display:block}
-@media(max-width:650px){.shell{padding-top:20px}.top{align-items:flex-start;flex-direction:column}.actions{width:100%}.actions .btn{flex:1}.stats{gap:8px}.stat{padding:13px}.stat-value{font-size:19px}.toolbar{padding:12px}.product-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;padding:10px}.product-media{height:145px}.product-content{padding:11px}.product-title{font-size:13px}.footer{align-items:flex-start;flex-direction:column}.config-grid{grid-template-columns:1fr}.dialog-body{padding:16px}.dialog-head,.dialog-foot{padding:15px 16px}}@media(max-width:390px){.product-grid{grid-template-columns:1fr}.product-media{height:180px}}
-
-
-/* Color and size variant manager */
-.variant-manager{display:grid;grid-template-columns:1fr 1fr;gap:14px}
-.variant-manager-panel{border:1px solid #e8ebf1;border-radius:11px;padding:12px;min-width:0}
-.variant-manager-title{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:10px}
-.variant-manager-title h4{font-size:12px;margin:0}
-.variant-manager-help{font-size:10px;color:#8993a5}
-.variant-color-card{border:1px solid #edf0f4;border-radius:9px;padding:10px;margin-bottom:9px}
-.variant-color-card-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
-.variant-color-card .field{margin-bottom:8px}
-.variant-color-card input,.variant-color-card textarea,.variant-size-row input{width:100%;min-width:0;padding:7px 8px;font-size:12px}
-.variant-color-card textarea{min-height:54px;resize:vertical}
-.variant-size-row{display:grid;grid-template-columns:1fr 1fr 1fr auto;gap:8px;align-items:end;margin-bottom:7px}
-.variant-size-row .field{margin:0;min-width:0}
-.variant-size-row label{display:block;font-size:10px;color:#69758a;margin:0 0 4px}
-.variant-preview{margin-top:14px;border:1px solid #e8ebf1;border-radius:10px;overflow:hidden}
-.variant-preview-head{padding:10px 12px;background:#f7f8fb;display:flex;justify-content:space-between;gap:8px;font-size:11px;font-weight:750}
-.variant-preview-list{padding:8px 12px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px 12px}
-.variant-preview-item{font-size:11px;color:#59657a;overflow-wrap:anywhere}
-.variant-conflict{padding:9px 11px;margin:0 0 10px;border-radius:8px;background:#fff4e8;color:#98601e;font-size:11px;line-height:1.5}
-@media(max-width:760px){.variant-manager{grid-template-columns:1fr}}
-@media(max-width:420px){.variant-size-row{grid-template-columns:1fr 1fr}.variant-size-row .field:first-child{grid-column:1/-1}}
-
-/* Compact edit layout */
-.edit-page{border-radius:12px}
-.edit-page-head{padding:12px 16px}
-.edit-page-head h2{font-size:16px}
-.edit-page-body{padding:14px 16px}
-.form-section{margin-bottom:16px}
-.form-section h3{font-size:13px;margin-bottom:9px}
-.edit-form-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:9px 10px}
-.edit-form-grid .field,.variant-grid .field{gap:4px}
-.edit-form-grid .field label,.variant-card .field label{font-size:11px}
-.edit-form-grid input,.edit-form-grid select,.edit-form-grid textarea,.variant-card input,.variant-card textarea{padding:7px 9px;font-size:12px;border-radius:7px;min-height:34px}
-.edit-form-grid textarea,.variant-card textarea{min-height:58px}
-.edit-form-grid .field.full{grid-column:span 2}
-.variant-heading{margin-bottom:8px}
-.variant-heading h3{font-size:13px}
-.variant-heading p{font-size:11px;margin-top:3px}
-.variant-card{padding:10px;margin-bottom:8px;border-radius:9px}
-.variant-card-head{margin-bottom:8px;font-size:11px}
-.variant-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:8px 10px}
-.variant-grid .field[style*="grid-column"]{grid-column:1/-1!important}
-.variant-empty{padding:12px;font-size:11px}
-.edit-page-meta{font-size:11px;margin-top:8px}
-.edit-page-foot{padding:10px 16px}
-.edit-page-foot .btn,.variant-heading .btn{padding:8px 11px;font-size:12px}
-@media(max-width:760px){
- .edit-form-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
- .variant-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
-}
-@media(max-width:520px){
- .edit-page-head{padding:11px 12px}
- .edit-page-body{padding:11px 12px}
- .edit-page-foot{padding:9px 12px}
- .edit-form-grid,.variant-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
- .edit-form-grid .field.full{grid-column:1/-1}
- .edit-page-head .btn{padding:7px 9px;font-size:11px}
- .variant-card{padding:8px}
- .edit-page-foot{align-items:stretch}
- .edit-page-foot>.actions{width:100%}
- .edit-page-foot>.actions .btn{flex:1}
-}
-@media(max-width:360px){
- .edit-form-grid,.variant-grid{grid-template-columns:1fr}
- .edit-form-grid .field.full{grid-column:1}
-}
+:root{color-scheme:light;--bg:#f5f6f8;--surface:#fff;--ink:#17191d;--muted:#777d87;--line:#e8e9ed;--soft:#f0f1f4;--accent:#1769e0;--accent-soft:#eaf2ff;--green:#16834b;--green-soft:#e9f7ef;--red:#c33d3d;--red-soft:#fff0f0;--amber:#996515;--amber-soft:#fff7e7;--radius:18px;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",sans-serif}
+*{box-sizing:border-box}html,body{margin:0;min-height:100%;background:var(--bg);color:var(--ink)}body{min-height:100dvh}button,input,select,textarea{font:inherit}button{cursor:pointer}button:disabled{opacity:.5;cursor:not-allowed}
+.app{min-height:100dvh;max-width:560px;margin:0 auto;display:flex;flex-direction:column;background:var(--bg);padding-bottom:calc(78px + env(safe-area-inset-bottom))}
+.topbar{position:sticky;top:0;z-index:5;background:rgba(245,246,248,.92);backdrop-filter:blur(18px);padding:calc(12px + env(safe-area-inset-top)) 18px 12px;border-bottom:1px solid rgba(232,233,237,.8);display:flex;align-items:center;justify-content:space-between;gap:12px}
+.brand{display:flex;align-items:center;gap:11px;min-width:0}.brand-mark{width:38px;height:38px;border-radius:12px;background:#17191d;color:#fff;display:grid;place-items:center;font-weight:750;font-size:17px}.brand-copy{min-width:0}.brand-copy strong{display:block;font-size:15px;letter-spacing:-.35px}.brand-copy span{display:block;color:var(--muted);font-size:11px;margin-top:2px}.top-actions{display:flex;gap:8px}
+.icon-button,.button{border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:12px;min-height:40px;padding:0 13px;font-size:13px;font-weight:650}.icon-button{width:40px;padding:0;font-size:17px}.button.primary{background:var(--accent);border-color:var(--accent);color:white}.button.danger{color:var(--red);border-color:#f1d4d4;background:#fff}.button.ghost{background:transparent}.button.small{min-height:34px;padding:0 10px;font-size:12px}.button.block{width:100%}
+main{flex:1;min-height:0;padding:18px 16px 22px;overflow-x:hidden}.screen{display:none}.screen.active{display:block}.screen-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin:2px 2px 17px}.eyebrow{font-size:11px;text-transform:uppercase;letter-spacing:.09em;color:var(--muted);font-weight:750}.screen-head h1{font-size:26px;line-height:1.12;letter-spacing:-1px;margin:5px 0 0}.screen-head p{font-size:12px;color:var(--muted);line-height:1.5;margin:6px 0 0}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:16px;box-shadow:0 2px 8px rgba(20,25,35,.025)}.section-title{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:20px 2px 10px}.section-title h2{font-size:15px;letter-spacing:-.25px;margin:0}.section-title span{font-size:11px;color:var(--muted)}
+.stats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.stat{padding:15px}.stat-icon{width:32px;height:32px;border-radius:10px;background:var(--soft);display:grid;place-items:center;font-size:15px;margin-bottom:12px}.stat-label{font-size:11px;color:var(--muted)}.stat-value{font-size:24px;font-weight:760;letter-spacing:-.8px;margin-top:4px}.stat-note{font-size:10px;color:var(--muted);margin-top:3px}
+.connection{display:flex;align-items:center;justify-content:space-between;gap:10px}.connection-copy strong{font-size:13px;display:block}.connection-copy span{font-size:11px;color:var(--muted);display:block;margin-top:4px;overflow-wrap:anywhere}.status{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:700;border-radius:99px;padding:7px 10px;background:var(--soft);white-space:nowrap}.status:before{content:"";width:7px;height:7px;border-radius:50%;background:#9ba1aa}.status.ok{background:var(--green-soft);color:var(--green)}.status.ok:before{background:var(--green)}.status.error{background:var(--red-soft);color:var(--red)}.status.error:before{background:var(--red)}
+.quick-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px}.quick{display:flex;align-items:center;gap:10px;text-align:left;padding:14px;border:1px solid var(--line);background:var(--surface);border-radius:15px;font-size:12px;font-weight:700}.quick b{width:34px;height:34px;border-radius:11px;background:var(--accent-soft);color:var(--accent);display:grid;place-items:center;font-size:17px}
+.product-list{display:flex;flex-direction:column;gap:10px}.product-row{display:flex;align-items:center;gap:12px;padding:11px;border:1px solid var(--line);border-radius:15px;background:var(--surface);width:100%;text-align:left;color:inherit}.thumb{width:68px;height:68px;flex:none;border-radius:12px;background:var(--soft);display:grid;place-items:center;overflow:hidden;color:#a0a5ad;font-size:10px}.thumb img{width:100%;height:100%;object-fit:contain}.product-row-copy{min-width:0;flex:1}.product-row-copy strong{display:block;font-size:13px;line-height:1.35;overflow-wrap:anywhere}.product-row-copy span{display:block;font-size:11px;color:var(--muted);margin-top:4px}.row-meta{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-top:7px}.tag{display:inline-flex;padding:5px 8px;border-radius:99px;background:var(--soft);color:#626873;font-size:10px;font-weight:650}.tag.good{background:var(--green-soft);color:var(--green)}.tag.warn{background:var(--amber-soft);color:var(--amber)}
+.searchbox{position:relative;margin-bottom:10px}.searchbox input{padding-left:39px}.searchbox span{position:absolute;left:14px;top:11px;color:var(--muted)}input,select,textarea{width:100%;min-height:42px;border:1px solid var(--line);border-radius:12px;background:#fff;color:var(--ink);padding:10px 12px;font-size:13px;outline:none}textarea{min-height:88px;resize:vertical}input:focus,select:focus,textarea:focus{border-color:#8eb4f5;box-shadow:0 0 0 3px rgba(23,105,224,.1)}label{display:block;font-size:11px;font-weight:700;color:#555b65;margin:0 0 6px}.filters{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px}.filters select{font-size:12px;min-height:39px;padding:8px}
+.list-count{font-size:11px;color:var(--muted);margin:0 2px 9px}.pagination{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:14px}.pagination span{font-size:11px;color:var(--muted)}
+.empty,.loading{padding:35px 18px;text-align:center;border:1px dashed #d9dce2;border-radius:16px;color:var(--muted);font-size:12px;line-height:1.6}.empty b{display:block;color:var(--ink);font-size:14px;margin-bottom:4px}
+.bottom-nav{position:fixed;z-index:8;bottom:0;left:50%;transform:translateX(-50%);width:min(560px,100%);padding:9px 16px calc(9px + env(safe-area-inset-bottom));background:rgba(255,255,255,.94);backdrop-filter:blur(20px);border-top:1px solid var(--line);display:grid;grid-template-columns:repeat(3,1fr)}.nav-item{border:0;background:transparent;color:#858a93;display:flex;flex-direction:column;align-items:center;gap:4px;font-size:10px;font-weight:650;padding:5px}.nav-item .nav-icon{font-size:19px;line-height:1.1}.nav-item.active{color:var(--accent)}
+.notice{padding:12px 13px;border-radius:13px;background:var(--amber-soft);color:var(--amber);font-size:11px;line-height:1.5;margin-bottom:13px}.notice.error{background:var(--red-soft);color:var(--red)}
+.editor-head{display:flex;align-items:center;gap:10px;margin-bottom:18px}.editor-head h1{font-size:22px;letter-spacing:-.7px;margin:0}.editor-head p{font-size:11px;color:var(--muted);margin:4px 0 0}.editor-section{margin-bottom:14px}.editor-section h2{font-size:14px;margin:0 0 13px;letter-spacing:-.2px}.field-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.field.full{grid-column:1/-1}.field input[readonly]{background:var(--soft);color:var(--muted)}.field textarea{min-height:78px}
+.variant-item{border:1px solid var(--line);border-radius:15px;padding:13px;margin-bottom:10px}.variant-item-head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:12px}.variant-item-head strong{font-size:12px}.variant-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.variant-image{display:flex;gap:8px;align-items:center}.variant-image input{min-width:0}.variant-image .button{flex:none}.variant-actions{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:12px}.variant-empty{padding:18px;text-align:center;color:var(--muted);font-size:12px;border:1px dashed var(--line);border-radius:12px}
+.sticky-actions{position:sticky;bottom:calc(76px + env(safe-area-inset-bottom));z-index:4;display:flex;gap:9px;padding:11px;margin:14px -4px 0;background:rgba(245,246,248,.94);backdrop-filter:blur(12px);border:1px solid var(--line);border-radius:16px}.sticky-actions .button.primary{flex:1}
+.detail-hero{display:flex;gap:14px;align-items:center}.detail-image{width:112px;height:112px;flex:none;border-radius:17px;background:var(--soft);display:grid;place-items:center;overflow:hidden;color:var(--muted);font-size:11px}.detail-image img{width:100%;height:100%;object-fit:contain}.detail-copy{min-width:0}.detail-copy h2{font-size:17px;line-height:1.3;margin:0;overflow-wrap:anywhere}.detail-copy p{font-size:11px;color:var(--muted);margin:6px 0}.detail-price{font-size:16px;font-weight:750;margin-top:9px}.detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.detail-field{padding:11px;background:#f8f8fa;border-radius:12px;min-width:0}.detail-field span{display:block;font-size:10px;color:var(--muted)}.detail-field strong{display:block;font-size:12px;margin-top:5px;overflow-wrap:anywhere}.variant-detail{padding:12px 0;border-bottom:1px solid var(--line)}.variant-detail:last-child{border-bottom:0}.variant-detail strong{font-size:12px}.variant-detail span{display:block;font-size:11px;color:var(--muted);margin-top:4px;overflow-wrap:anywhere}
+.settings-field{margin-bottom:13px}.settings-field small{display:block;color:var(--muted);font-size:10px;line-height:1.5;margin-top:6px}.toast{position:fixed;z-index:20;left:50%;bottom:calc(88px + env(safe-area-inset-bottom));transform:translateX(-50%);width:max-content;max-width:calc(100% - 32px);padding:12px 15px;border-radius:13px;background:#202329;color:#fff;font-size:12px;box-shadow:0 8px 30px #0002;display:none}.toast.show{display:block}
+@media(min-width:561px){body{background:#e9ebef}.app{box-shadow:0 0 40px #1720330b}}
+@media(max-width:360px){main{padding-left:12px;padding-right:12px}.field-grid,.variant-grid{grid-template-columns:1fr}.screen-head h1{font-size:23px}.detail-hero{align-items:flex-start}.detail-image{width:88px;height:88px}}
 </style>
 </head>
 <body>
-<div class="shell">
-<header class="top">
-  <div class="brand"><div class="mark">P</div><div><h1>Products Dashboard</h1><div class="sub">Admin CRUD · Supabase Edge Function</div></div></div>
-  <div class="actions"><button class="btn" id="refreshBtn">↻ Refresh</button><button class="btn primary" id="addBtn">＋ Add product</button></div>
+<div class="app">
+<header class="topbar">
+ <div class="brand"><div class="brand-mark">A</div><div class="brand-copy"><strong>Apple The Exchange TRX</strong><span id="headerSubtitle">Product Admin</span></div></div>
+ <div class="top-actions"><button class="icon-button" id="refreshBtn" aria-label="Refresh">↻</button><button class="icon-button" id="headerAddBtn" aria-label="Add product">＋</button></div>
 </header>
-<div class="notice show" id="securityNotice">Endpoint crud-products dikonfigurasi untuk akses publik. Dashboard mengirim request langsung tanpa apikey dan tanpa Authorization.</div>
-<div class="notice update-notice" id="updateNotice" role="status" aria-live="polite">
- <div class="update-notice-text"><strong>Pembaruan tersedia.</strong> Versi terbaru dashboard sudah tersedia di GitHub.</div>
- <button class="btn primary" id="applyUpdateBtn" type="button">Update dashboard</button>
-</div>
-<section class="edit-page" id="editPage" aria-labelledby="editPageTitle">
-  <div class="edit-page-head"><div><h2 id="editPageTitle">Edit product</h2><div class="sub" id="editPageSubtitle">Update product data</div></div><button class="btn" id="backToProductsBtn">← Back to products</button></div>
-  <div class="edit-page-body"><form id="editProductForm" novalidate><div class="form-section"><h3>Informasi produk</h3><div class="edit-form-grid" id="productFields"></div></div><div class="form-section"><div class="variant-heading"><div><h3>Variants</h3><p>Kelola gambar per warna dan harga per ukuran. Semua kombinasi dibuat otomatis.</p></div></div><div id="variantFields"></div></div></form><div class="edit-page-meta">Perubahan dikirim menggunakan PATCH ke endpoint crud-products. item_group_id dikunci sebagai identitas produk.</div></div>
-  <div class="edit-page-foot"><button class="btn danger" id="editPageDeleteBtn">Delete product</button><div class="actions"><button class="btn" id="editPageCancelBtn">Cancel</button><button class="btn primary" id="editPageSaveBtn">Save changes</button></div></div>
+<main>
+<section class="screen active" id="homeScreen">
+ <div class="screen-head"><div><div class="eyebrow">Overview</div><h1>Dashboard</h1><p>Ringkasan katalog produk Anda.</p></div><span class="status" id="homeStatus">Checking</span></div>
+ <div class="stats">
+  <div class="card stat"><div class="stat-icon">▦</div><div class="stat-label">Total products</div><div class="stat-value" id="totalStat">—</div><div class="stat-note">Total dari API</div></div>
+  <div class="card stat"><div class="stat-icon">◫</div><div class="stat-label">Loaded products</div><div class="stat-value" id="loadedStat">—</div><div class="stat-note">Halaman aktif</div></div>
+  <div class="card stat"><div class="stat-icon">✓</div><div class="stat-label">In stock</div><div class="stat-value" id="stockStat">—</div><div class="stat-note">Data pada halaman aktif</div></div>
+  <div class="card stat"><div class="stat-icon">◷</div><div class="stat-label">Last sync</div><div class="stat-value" id="syncStat" style="font-size:17px">—</div><div class="stat-note">Waktu lokal</div></div>
+ </div>
+ <div class="section-title"><h2>API connection</h2><span id="apiLabel">Supabase Edge Function</span></div>
+ <div class="card connection"><div class="connection-copy"><strong id="connectionTitle">Checking connection…</strong><span id="connectionNote">Menghubungkan ke endpoint produk</span></div><span class="status" id="connectionBadge">Checking</span></div>
+ <div class="section-title"><h2>Quick actions</h2></div>
+ <div class="quick-actions"><button class="quick" id="quickAdd"><b>＋</b><span>Add product</span></button><button class="quick" id="quickProducts"><b>▦</b><span>Manage products</span></button></div>
+ <div class="section-title"><h2>Recent products</h2><button class="button ghost small" id="seeAllBtn">See all</button></div>
+ <div class="product-list" id="recentProducts"><div class="loading">Loading products…</div></div>
 </section>
-<section class="stats">
-  <div class="stat"><div class="stat-label">Total products</div><div class="stat-value" id="totalStat">—</div><div class="stat-note">Jumlah record dari API</div></div>
-  <div class="stat"><div class="stat-label">Products on this page</div><div class="stat-value" id="pageStat">—</div><div class="stat-note">Data yang sedang ditampilkan</div></div>
-  <div class="stat"><div class="stat-label">API connection</div><div class="stat-value" style="font-size:16px" id="connectionStat">Not checked</div><div class="stat-note" id="connectionNote">Hubungkan untuk memuat data</div></div>
+<section class="screen" id="productsScreen">
+ <div class="screen-head"><div><div class="eyebrow">Catalog</div><h1>Products</h1><p>Kelola katalog produk dan varian.</p></div><button class="button primary small" id="addProductBtn">＋ Add</button></div>
+ <div class="searchbox"><span>⌕</span><input id="searchInput" placeholder="Cari nama, brand, atau deskripsi…" autocomplete="off"></div>
+ <div class="filters"><select id="productTypeSelect" aria-label="Filter product type"><option value="">Semua tipe produk</option></select><select id="limitSelect" aria-label="Items per page"><option value="10">10 per halaman</option><option value="20" selected>20 per halaman</option><option value="50">50 per halaman</option><option value="100">100 per halaman</option></select><select id="sortSelect" aria-label="Sort"><option value="created_at">Terbaru</option><option value="updated_at">Baru diperbarui</option><option value="title">Nama produk</option><option value="item_group_id">Item group ID</option></select><select id="orderSelect" aria-label="Order"><option value="desc">Descending</option><option value="asc">Ascending</option></select></div>
+ <div class="list-count" id="rangeText">—</div><div class="product-list" id="productCards" aria-live="polite"><div class="loading">Loading products…</div></div>
+ <div class="pagination"><button class="button small" id="prevBtn">← Sebelumnya</button><span id="pageText">Halaman 1</span><button class="button small" id="nextBtn">Berikutnya →</button></div>
 </section>
-<section class="panel">
-  <div class="toolbar">
-    <div class="search"><span>⌕</span><input id="searchInput" placeholder="Search title, description, or brand…" autocomplete="off"></div>
-    <select id="productTypeSelect" aria-label="Filter by product type"><option value="">All product types</option></select>
-    <select id="limitSelect" aria-label="Products per page"><option value="10">10 / page</option><option value="20" selected>20 / page</option><option value="50">50 / page</option><option value="100">100 / page</option></select>
-    <select id="sortSelect" aria-label="Sort by"><option value="created_at">Newest</option><option value="updated_at">Recently updated</option><option value="title">Title</option><option value="item_group_id">Item group ID</option></select>
-    <select id="orderSelect" aria-label="Sort order"><option value="desc">Descending</option><option value="asc">Ascending</option></select>
-  </div>
-  <div class="product-grid" id="productCards" aria-live="polite"><div class="empty">Loading products…</div></div>
-  <div class="footer"><div id="rangeText">—</div><div class="actions"><button class="btn" id="prevBtn">← Previous</button><button class="btn" id="nextBtn">Next →</button></div></div>
+<section class="screen" id="settingsScreen">
+ <div class="screen-head"><div><div class="eyebrow">Configuration</div><h1>Settings</h1><p>Konfigurasi dashboard dan koneksi API.</p></div></div>
+ <div class="card">
+  <div class="section-title" style="margin:0 0 13px"><h2>API endpoint</h2><span class="status ok">Active</span></div>
+  <div class="settings-field"><label for="endpointInput">CRUD products endpoint</label><input id="endpointInput" type="url" autocomplete="url"><small>Endpoint digunakan untuk GET, POST, PATCH, DELETE dan upload gambar. Perubahan endpoint hanya disimpan pada browser ini.</small></div>
+  <button class="button primary block" id="saveEndpointBtn">Save endpoint</button>
+  <button class="button block" id="testConnectionBtn" style="margin-top:9px">Test connection</button>
+ </div>
+ <div class="section-title"><h2>Application</h2></div>
+ <div class="card"><div class="detail-field"><span>Dashboard version</span><strong>Mobile Admin v2.0.0</strong></div><div class="detail-field" style="margin-top:9px"><span>Repository</span><strong>appletheexchangetrx/dashboard</strong></div><button class="button block" id="githubBtn" style="margin-top:12px">Open GitHub repository ↗</button></div>
+ <div class="section-title"><h2>Data & security</h2></div>
+ <div class="notice">Dashboard ini menggunakan endpoint CRUD yang tersedia. Pastikan Edge Function memvalidasi autentikasi dan hak akses admin di sisi server. Keamanan tidak dapat dijamin hanya dengan menyembunyikan kontrol di antarmuka.</div>
+ <button class="button block" id="settingsRefreshBtn">Refresh product data</button>
 </section>
-<p class="help">Data ditampilkan langsung dari endpoint <code>crud-products</code>. Perubahan disimpan ke database melalui Edge Function. Pilih kartu produk untuk membuka halaman edit dan mengatur field product serta variants melalui form.</p>
+<section class="screen" id="detailScreen">
+ <div class="editor-head"><button class="icon-button" id="detailBackBtn" aria-label="Back">←</button><div><h1>Product detail</h1><p>Informasi produk dan variants</p></div></div>
+ <div id="detailContent"></div>
+ <div class="sticky-actions"><button class="button danger" id="detailDeleteBtn">Delete</button><button class="button primary" id="detailEditBtn">Edit product</button></div>
+</section>
+<section class="screen" id="editorScreen">
+ <div class="editor-head"><button class="icon-button" id="editorBackBtn" aria-label="Back">←</button><div><h1 id="editorTitle">Add product</h1><p id="editorSubtitle">Lengkapi informasi produk.</p></div></div>
+ <form id="productForm" novalidate>
+  <div class="card editor-section"><h2>Product information</h2><div class="field-grid" id="productFields"></div></div>
+  <div class="card editor-section"><div class="section-title" style="margin:0 0 12px"><h2>Variants</h2><span id="variantCount">0 variants</span></div><div id="variantFields"></div><button class="button block" type="button" id="addVariantBtn">＋ Add variant</button></div>
+  <div class="sticky-actions"><button class="button" type="button" id="cancelEditorBtn">Cancel</button><button class="button primary" type="submit" id="saveProductBtn">Save product</button></div>
+ </form>
+</section>
+</main>
+<nav class="bottom-nav" id="bottomNav" aria-label="Main navigation">
+ <button class="nav-item active" data-tab="home"><span class="nav-icon">⌂</span><span>Home</span></button>
+ <button class="nav-item" data-tab="products"><span class="nav-icon">▦</span><span>Products</span></button>
+ <button class="nav-item" data-tab="settings"><span class="nav-icon">⚙</span><span>Settings</span></button>
+</nav>
 </div>
-
-<div class="overlay" id="editorOverlay" role="dialog" aria-modal="true" aria-labelledby="editorTitle">
-<div class="dialog"><div class="dialog-head"><h2 id="editorTitle">Add product</h2><button class="icon-btn" data-close="editorOverlay">✕</button></div>
-<div class="dialog-body"><div class="field"><label for="productJson">Product JSON</label><textarea id="productJson" spellcheck="false"></textarea><small id="editorHint">POST · title dan item_group_id wajib. variants harus berupa array; setiap variant wajib memiliki id.</small></div><div class="field" id="methodField" style="display:none"><label>Update method</label><input value="PATCH" readonly aria-label="Update method PATCH"></div><div class="help">Field product: title, description, brand, gtin, mpn, item_group_id, availability, condition, quantity_to_sell_on_facebook, expiration_date, link, google_product_category, product_type, rich_text_description, custom_label_0, sale_price_effective_date, variants. Variant: id, size, color, price, image_link, sale_price, additional_image_link.</div></div>
-<div class="dialog-foot"><button class="btn danger" id="deleteBtn" style="display:none">Delete product</button><div class="actions"><button class="btn" data-close="editorOverlay">Cancel</button><button class="btn primary" id="saveBtn">Create product</button></div></div></div>
-</div>
-
-<div class="toast" id="toast"></div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
 <script>
-(() => {
-const DEFAULT_ENDPOINT = "https://axednjikcambzbkxyqpp.supabase.co/functions/v1/crud-products";
-const DASHBOARD_SOURCE_URL="https://raw.githubusercontent.com/appletheexchangetrx/dashboard/refs/heads/main/index.html";
-let updateCheckRunning=false;
-async function checkDashboardUpdate(){
- if(updateCheckRunning||!navigator.onLine)return;
- updateCheckRunning=true;
- try{
-  const cacheBuster="_update_check="+Date.now();
-  const [currentResponse,latestResponse]=await Promise.all([
-   fetch(window.location.href,{cache:"no-store"}),
-   fetch(DASHBOARD_SOURCE_URL+"?"+cacheBuster,{cache:"no-store"})
-  ]);
-  if(!currentResponse.ok||!latestResponse.ok)throw new Error("Tidak dapat memeriksa versi dashboard.");
-  const [currentHtml,latestHtml]=await Promise.all([currentResponse.text(),latestResponse.text()]);
-  const available= currentHtml.trim()!==latestHtml.trim();
-  $("updateNotice").classList.toggle("show",available);
- }catch(error){
-  console.warn("Dashboard update check failed:",error);
- }finally{
-  updateCheckRunning=false;
- }
-}
-function applyDashboardUpdate(){
- $("applyUpdateBtn").disabled=true;
- $("applyUpdateBtn").textContent="Memuat ulang…";
- const target=new URL(window.location.href);
- target.searchParams.set("_dashboard_refresh",String(Date.now()));
- window.location.replace(target.toString());
-}
-const $ = id => document.getElementById(id);
-const state = {page:1,limit:20,total:0,totalPages:0,products:[],productTypes:new Set(),editing:null,searchTimer:null,loadSequence:0};
-function toast(message){const el=$("toast");el.textContent=message;el.classList.add("show");clearTimeout(toast.timer);toast.timer=setTimeout(()=>el.classList.remove("show"),3400)}
-function setConnection(ok,note){$("connectionStat").textContent=ok?"Connected":"Error";$("connectionNote").textContent=note;$("connectionStat").style.color=ok?"#23834b":"#c43838"}
-function apiUrl(params={}){const u=new URL(DEFAULT_ENDPOINT);Object.entries(params).forEach(([k,v])=>{if(v!==undefined&&v!==null&&v!=="")u.searchParams.set(k,v)});return u.toString()}
-async function request(method,url,body){
- const headers={};
- const options={method,headers};if(body!==undefined){headers["Content-Type"]="application/json";options.body=JSON.stringify(body)}
- const response=await fetch(url,options);let result;
- const raw=await response.text();try{result=raw?JSON.parse(raw):{}}catch{result={raw}};
- if(!response.ok||result.success===false)throw new Error(result.error||result.message||("HTTP "+response.status));
- return result;
-}
-function esc(v){return String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
-function date(v){if(!v)return "—";const d=new Date(v);return Number.isNaN(d.getTime())?"—":d.toLocaleDateString("id-ID",{day:"2-digit",month:"short",year:"numeric"})}
-function imageUrl(product){
- const variant=Array.isArray(product.variants)?product.variants.find(v=>v&&v.image_link)||product.variants.find(v=>v&&Array.isArray(v.additional_image_link)&&v.additional_image_link[0]):null;
- const raw=variant?.image_link||variant?.additional_image_link?.[0];
- if(typeof raw!=="string")return "";
- try{const url=new URL(raw);return url.protocol==="https:"||url.protocol==="http:"?url.href:""}catch{return ""}
-}
-function productPrice(product){
- if(!Array.isArray(product.variants))return "—";
- const variant=product.variants.find(v=>v&&v.sale_price!==null&&v.sale_price!==undefined)||
-  product.variants.find(v=>v&&v.price!==null&&v.price!==undefined);
- if(!variant)return "—";
- const value=variant.sale_price??variant.price;
- return typeof value==="number"?new Intl.NumberFormat("id-ID",{maximumFractionDigits:2}).format(value):String(value);
-}
-function updateProductTypeOptions(){
- const select=$("productTypeSelect"),selected=select.value;
- state.products.forEach(p=>{if(typeof p.product_type==="string"&&p.product_type.trim())state.productTypes.add(p.product_type.trim())});
- const values=[...state.productTypes].sort((a,b)=>a.localeCompare(b,"id"));
- select.innerHTML='<option value="">All product types</option>'+values.map(value=>'<option value="'+esc(value)+'">'+esc(value)+'</option>').join("");
- if(selected&&state.productTypes.has(selected))select.value=selected;
-}
-function render(){
- const cards=$("productCards");$("totalStat").textContent=state.total.toLocaleString("id-ID");$("pageStat").textContent=state.products.length;
- updateProductTypeOptions();
- if(!state.products.length){cards.innerHTML='<div class="empty">No products found. Add your first product or change the filters.</div>'}
- else cards.innerHTML=state.products.map((p,i)=>{
-  const availability=(p.availability||"—").toLowerCase();const pill=availability==="in stock"?"in":availability==="out of stock"?"out":"";
-  const src=imageUrl(p),variants=Array.isArray(p.variants)?p.variants.length:0;
-  const media=src?'<img src="'+esc(src)+'" alt="'+esc(p.title||"Product image")+'" loading="lazy" onerror="this.style.display=\'none\';this.nextElementSibling.style.display=\'block\'"><span class="media-placeholder" style="display:none">No image available</span>':'<span class="media-placeholder">No image available</span>';
-  return '<article class="product-card" data-open-edit="'+i+'" role="button" tabindex="0" aria-label="Edit '+esc(p.title||"product")+'"><div class="product-media">'+media+'</div><div class="product-content"><div class="product-title">'+esc(p.title||"(Untitled product)")+'</div><div class="product-brand">'+esc(p.brand||"No brand")+'</div><div class="product-meta"><span class="product-type">'+esc(p.product_type||"Uncategorized")+'</span><span class="pill '+pill+'">'+esc(p.availability||"Not set")+'</span></div><div class="product-price">'+esc(productPrice(p))+'</div><div class="product-id">Item group: '+esc(p.item_group_id||"—")+'</div><div class="product-id">'+variants+' variant'+(variants===1?"":"s")+' · Updated '+date(p.updated_at||p.created_at)+'</div><div class="product-id">Click to edit →</div></div></article>';
- }).join("");
- const start=state.total?((state.page-1)*state.limit+1):0,end=Math.min(state.page*state.limit,state.total);
- $("rangeText").textContent="Showing "+start+"–"+end+" of "+state.total;
- $("prevBtn").disabled=state.page<=1;$("nextBtn").disabled=!state.totalPages||state.page>=state.totalPages;
-}
-async function load(){
- const sequence=++state.loadSequence;
- $("productCards").innerHTML='<div class="empty">Loading products…</div>';
- $("refreshBtn").disabled=true;
- try{
- const result=await request("GET",apiUrl({page:state.page,limit:state.limit,search:$("searchInput").value.trim(),product_type:$("productTypeSelect").value,sort:$("sortSelect").value,order:$("orderSelect").value}));
- if(sequence!==state.loadSequence)return;
- state.products=Array.isArray(result.data)?result.data:[];const pg=result.pagination||{};
- state.total=Number(pg.total??state.products.length);state.totalPages=Number(pg.total_pages??Math.ceil(state.total/state.limit));
- setConnection(true,"Last synced "+new Date().toLocaleTimeString("id-ID",{hour:"2-digit",minute:"2-digit"}));render();
- }catch(e){if(sequence!==state.loadSequence)return;state.products=[];state.total=0;state.totalPages=0;state.page=1;render();$("productCards").innerHTML='<div class="empty">Could not load products: '+esc(e.message)+'</div>';setConnection(false,e.message);toast(e.message)}
- finally{if(sequence===state.loadSequence)$("refreshBtn").disabled=false}
-}
-const EDIT_FIELDS=[
- {key:"title",label:"Product title",required:true},
- {key:"description",label:"Description",multiline:true},
- {key:"brand",label:"Brand"},{key:"gtin",label:"GTIN"},{key:"mpn",label:"MPN"},
- {key:"item_group_id",label:"Item group ID",required:true,readonly:true},
- {key:"availability",label:"Availability",placeholder:"in stock / out of stock"},
- {key:"condition",label:"Condition",placeholder:"new / used / refurbished"},
- {key:"quantity_to_sell_on_facebook",label:"Quantity to sell on Facebook",type:"number"},
- {key:"expiration_date",label:"Expiration date",placeholder:"YYYY-MM-DD"},
- {key:"link",label:"Product URL",type:"url"},{key:"google_product_category",label:"Google product category"},
- {key:"product_type",label:"Product type"},{key:"rich_text_description",label:"Rich text description",multiline:true},
- {key:"custom_label_0",label:"Custom label 0"},{key:"sale_price_effective_date",label:"Sale price effective date"}
+(function(){
+"use strict";
+var DEFAULT_ENDPOINT="https://axednjikcambzbkxyqpp.supabase.co/functions/v1/crud-products";
+var ENDPOINT_KEY="apple-trx-dashboard-endpoint";
+var $=function(id){return document.getElementById(id)};
+var state={page:1,limit:20,total:0,totalPages:0,products:[],productTypes:new Set(),editing:null,selected:null,returnScreen:"products",searchTimer:null,loadSequence:0,endpoint:DEFAULT_ENDPOINT,screen:"home",lastSync:null};
+var PRODUCT_FIELDS=[
+ {key:"title",label:"Product title",required:true,full:true},{key:"description",label:"Description",multiline:true,full:true},{key:"brand",label:"Brand"},{key:"gtin",label:"GTIN"},{key:"mpn",label:"MPN"},{key:"item_group_id",label:"Item group ID",required:true,readonly:true,full:true},{key:"availability",label:"Availability",placeholder:"in stock / out of stock"},{key:"condition",label:"Condition",placeholder:"new / used / refurbished"},{key:"quantity_to_sell_on_facebook",label:"Quantity to sell on Facebook",type:"number"},{key:"expiration_date",label:"Expiration date",placeholder:"YYYY-MM-DD"},{key:"link",label:"Product URL",type:"url",full:true},{key:"google_product_category",label:"Google product category",full:true},{key:"product_type",label:"Product type"},{key:"custom_label_0",label:"Custom label 0"},{key:"sale_price_effective_date",label:"Sale price effective date",full:true},{key:"rich_text_description",label:"Rich text description",multiline:true,full:true}
 ];
-function renderEditForm(product){
- $("productFields").innerHTML=EDIT_FIELDS.map(field=>{
-  const value=product[field.key]??"",type=field.type||"text";
-  const control=field.multiline?'<textarea data-product-field="'+field.key+'" '+(field.required?"required ":"")+'>'+esc(value)+'</textarea>':'<input data-product-field="'+field.key+'" type="'+type+'" value="'+esc(value)+'" '+(field.required?"required ":"")+(field.readonly?"readonly ":"")+(field.placeholder?'placeholder="'+esc(field.placeholder)+'" ':"")+'>';
-  return '<div class="field '+(field.multiline?"full":"")+'"><label>'+field.label+(field.required?" *":"")+'</label>'+control+'</div>';
- }).join("");
- initializeVariantManager(Array.isArray(product.variants)?product.variants:[]);
+var PRODUCT_KEYS=PRODUCT_FIELDS.map(function(f){return f.key}).concat(["variants"]);
+var VARIANT_KEYS=["id","size","color","price","image_link","sale_price","additional_image_link"];
+function endpoint(){return state.endpoint}
+function apiUrl(params){var u=new URL(endpoint());Object.keys(params||{}).forEach(function(k){var v=params[k];if(v!==undefined&&v!==null&&v!=="")u.searchParams.set(k,v)});return u.toString()}
+function toast(message){var el=$("toast");el.textContent=message;el.classList.add("show");clearTimeout(toast.timer);toast.timer=setTimeout(function(){el.classList.remove("show")},3200)}
+function esc(v){return String(v==null?"":v).replace(/[&<>"']/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]})}
+function date(v){if(!v)return "—";var d=new Date(v);return isNaN(d.getTime())?"—":d.toLocaleDateString("id-ID",{day:"2-digit",month:"short",year:"numeric"})}
+function money(v){if(v===null||v===undefined||v==="")return "—";var n=Number(v);return Number.isFinite(n)?new Intl.NumberFormat("id-ID",{maximumFractionDigits:2}).format(n):String(v)}
+function imageUrl(p){var vs=Array.isArray(p.variants)?p.variants:[];var v=vs.find(function(x){return x&&x.image_link})||vs.find(function(x){return x&&Array.isArray(x.additional_image_link)&&x.additional_image_link[0]});var raw=v&&(v.image_link||(v.additional_image_link||[])[0]);try{var u=new URL(raw);return ["https:","http:"].includes(u.protocol)?u.href:""}catch(e){return ""}}
+function productPrice(p){var vs=Array.isArray(p.variants)?p.variants:[];var v=vs.find(function(x){return x&&x.sale_price!==null&&x.sale_price!==undefined})||vs.find(function(x){return x&&x.price!==null&&x.price!==undefined});return v?money(v.sale_price!=null?v.sale_price:v.price):"—"}
+async function request(method,url,body){var options={method:method,headers:{}};if(body!==undefined){options.headers["Content-Type"]="application/json";options.body=JSON.stringify(body)}var response=await fetch(url,options);var raw=await response.text();var result={};try{result=raw?JSON.parse(raw):{}}catch(e){result={raw:raw}}if(!response.ok||result.success===false)throw new Error(result.error||result.message||("HTTP "+response.status));return result}
+function setConnection(ok,note){var title=$("connectionTitle"),badge=$("connectionBadge"),home=$("homeStatus");title.textContent=ok?"API connected":"Connection error";$("connectionNote").textContent=note;badge.textContent=ok?"Connected":"Error";badge.className="status "+(ok?"ok":"error");home.textContent=ok?"Connected":"Offline";home.className="status "+(ok?"ok":"error")}
+function updateStats(){ $("totalStat").textContent=Number(state.total||0).toLocaleString("id-ID");$("loadedStat").textContent=state.products.length;$("stockStat").textContent=state.products.filter(function(p){return String(p.availability||"").toLowerCase()==="in stock"}).length;$("syncStat").textContent=state.lastSync?state.lastSync.toLocaleTimeString("id-ID",{hour:"2-digit",minute:"2-digit"}):"—"}
+function updateTypes(){var select=$("productTypeSelect"),chosen=select.value,types=new Set();state.products.forEach(function(p){if(p.product_type)types.add(String(p.product_type).trim())});state.productTypes=types;select.innerHTML='<option value="">Semua tipe produk</option>'+Array.from(types).sort().map(function(t){return '<option value="'+esc(t)+'">'+esc(t)+'</option>'}).join("");if(types.has(chosen))select.value=chosen}
+function productRow(p,detail){var src=imageUrl(p),availability=String(p.availability||"").toLowerCase(),tag=availability==="in stock"?"good":availability==="out of stock"?"warn":"";return '<button class="product-row" type="button" data-product-id="'+esc(p.item_group_id)+'"><span class="thumb">'+(src?'<img src="'+esc(src)+'" alt="" loading="lazy" onerror="this.remove()">':'◇')+'</span><span class="product-row-copy"><strong>'+esc(p.title||"Untitled product")+'</strong><span>'+esc(p.brand||"No brand")+' · '+esc(p.product_type||"Uncategorized")+'</span><span class="row-meta"><span class="tag '+tag+'">'+esc(p.availability||"Not set")+'</span><span class="tag">'+(Array.isArray(p.variants)?p.variants.length:0)+' variants</span></span></span><span style="color:#9ba1aa">›</span></button>'}
+function renderProducts(){updateStats();updateTypes();$("rangeText").textContent=state.total?"Menampilkan "+((state.page-1)*state.limit+1)+"–"+Math.min(state.page*state.limit,state.total)+" dari "+state.total+" produk":"0 produk";$("pageText").textContent="Halaman "+state.page+" / "+Math.max(1,state.totalPages);$("prevBtn").disabled=state.page<=1;$("nextBtn").disabled=!state.totalPages||state.page>=state.totalPages;var html=state.products.map(function(p){return productRow(p,true)}).join("");$("productCards").innerHTML=html||'<div class="empty"><b>Produk tidak ditemukan</b>Coba ubah pencarian atau filter, atau tambahkan produk baru.</div>';$("recentProducts").innerHTML=state.products.slice(0,4).map(function(p){return productRow(p,false)}).join("")||'<div class="empty">Belum ada produk untuk ditampilkan.</div>'}
+async function load(){var seq=++state.loadSequence;$("productCards").innerHTML='<div class="loading">Memuat produk…</div>';try{var result=await request("GET",apiUrl({page:state.page,limit:state.limit,search:$("searchInput").value.trim(),product_type:$("productTypeSelect").value,sort:$("sortSelect").value,order:$("orderSelect").value}));if(seq!==state.loadSequence)return;state.products=Array.isArray(result.data)?result.data:[];var pg=result.pagination||{};state.total=Number(pg.total!=null?pg.total:state.products.length);state.totalPages=Number(pg.total_pages!=null?pg.total_pages:Math.ceil(state.total/state.limit));state.lastSync=new Date();setConnection(true,"Terakhir disinkronkan "+state.lastSync.toLocaleTimeString("id-ID",{hour:"2-digit",minute:"2-digit"}));renderProducts()}catch(e){if(seq!==state.loadSequence)return;state.products=[];state.total=0;state.totalPages=0;renderProducts();$("productCards").innerHTML='<div class="empty"><b>Gagal memuat produk</b>'+esc(e.message)+'</div>';$("recentProducts").innerHTML='<div class="empty">Periksa koneksi API di Settings.</div>';setConnection(false,e.message)}}
+function switchScreen(name){state.screen=name;document.querySelectorAll(".screen").forEach(function(s){s.classList.toggle("active",s.id===name+"Screen")});document.querySelectorAll(".nav-item").forEach(function(b){b.classList.toggle("active",b.dataset.tab===name)});$("bottomNav").style.display=["detail","editor"].includes(name)?"none":"grid";$("headerSubtitle").textContent=name==="home"?"Product Admin":name==="products"?"Product catalog":name==="settings"?"App configuration":name==="detail"?"Product detail":"Product editor";window.scrollTo({top:0,behavior:"instant"})}
+function openEditor(product){state.editing=product||null;state.returnScreen=product?"detail":"products";$("editorTitle").textContent=product?"Edit product":"Add product";$("editorSubtitle").textContent=product?(product.title||product.item_group_id):"Lengkapi informasi produk.";renderProductFields(product||{availability:"in stock",condition:"new",variants:[]});renderVariants(product&&Array.isArray(product.variants)?product.variants:[]);$("saveProductBtn").textContent=product?"Save changes":"Create product";switchScreen("editor")}
+function renderProductFields(p){$("productFields").innerHTML=PRODUCT_FIELDS.map(function(f){var value=p[f.key]==null?"":p[f.key],control=f.multiline?'<textarea data-field="'+f.key+'" '+(f.required?"required":"")+'>'+esc(value)+'</textarea>':'<input data-field="'+f.key+'" type="'+(f.type||"text")+'" value="'+esc(value)+'" '+(f.required?"required ":"")+(f.readonly?"readonly ":"")+(f.placeholder?'placeholder="'+esc(f.placeholder)+'" ':"")+'>';return '<div class="field '+(f.full?"full":"")+'"><label>'+esc(f.label)+(f.required?" *":"")+'</label>'+control+'</div>'}).join("")}
+function renderVariants(variants){var html=(variants||[]).map(function(v,i){return '<article class="variant-item" data-variant-index="'+i+'"><div class="variant-item-head"><strong>Variant '+(i+1)+'</strong><button class="button danger small" type="button" data-remove-variant="'+i+'">Remove</button></div><div class="variant-grid"><div class="field"><label>Variant ID</label><input data-vfield="id" value="'+esc(v.id||"")+'" placeholder="Unique variant ID"></div><div class="field"><label>Color</label><input data-vfield="color" value="'+esc(v.color||"")+'" placeholder="e.g. Midnight"></div><div class="field"><label>Size</label><input data-vfield="size" value="'+esc(v.size||"")+'" placeholder="e.g. 256GB"></div><div class="field"><label>Price</label><input data-vfield="price" type="number" step="any" value="'+esc(v.price==null?"":v.price)+'"></div><div class="field"><label>Sale price</label><input data-vfield="sale_price" type="number" step="any" value="'+esc(v.sale_price==null?"":v.sale_price)+'"></div><div class="field full"><label>Image URL</label><input data-vfield="image_link" type="url" value="'+esc(v.image_link||"")+'" placeholder="https://..."></div><div class="field full"><label>Additional image URLs (one per line)</label><textarea data-vfield="additional_image_link">'+esc(Array.isArray(v.additional_image_link)?v.additional_image_link.join("\\n"):"")+'</textarea></div></div></article>'}).join("");$("variantFields").innerHTML=html||'<div class="variant-empty">Belum ada variant. Tambahkan variant jika produk memiliki pilihan warna atau kapasitas.</div>';$("variantCount").textContent=(variants||[]).length+" variants"}
+function readVariants(){return Array.from($("variantFields").querySelectorAll(".variant-item")).map(function(card){var v={};card.querySelectorAll("[data-vfield]").forEach(function(el){v[el.dataset.vfield]=el.value.trim()});return {id:v.id,color:v.color||null,size:v.size||null,price:v.price===""?null:Number(v.price),sale_price:v.sale_price===""?null:Number(v.sale_price),image_link:v.image_link||null,additional_image_link:v.additional_image_link? v.additional_image_link.split(/\\r?\\n/).map(function(x){return x.trim()}).filter(Boolean):null}})}
+function readProduct(){var data={};PRODUCT_FIELDS.forEach(function(f){var el=$("productFields").querySelector('[data-field="'+f.key+'"]'),v=el.value.trim();if(f.key==="quantity_to_sell_on_facebook")data[f.key]=v===""?null:Number(v);else if(f.key==="title"||f.key==="item_group_id")data[f.key]=v;else data[f.key]=v===""?null:v});data.variants=readVariants();return data}
+function validate(data,isEdit){if(!data.title||!data.title.trim())throw new Error("Product title wajib diisi.");if(!data.item_group_id||!data.item_group_id.trim())throw new Error("Item group ID wajib diisi.");if(isEdit&&data.item_group_id!==state.editing.item_group_id)throw new Error("Item group ID tidak dapat diubah.");if(data.quantity_to_sell_on_facebook!=null&&(!Number.isInteger(data.quantity_to_sell_on_facebook)||data.quantity_to_sell_on_facebook<0))throw new Error("Quantity harus berupa integer non-negatif.");if(!Array.isArray(data.variants))throw new Error("Variants harus berupa array.");var ids=new Set();data.variants.forEach(function(v,i){if(!v.id||!v.id.trim())throw new Error("Variant "+(i+1)+" wajib memiliki ID.");if(ids.has(v.id))throw new Error("Variant ID harus unik: "+v.id);ids.add(v.id);["price","sale_price"].forEach(function(k){if(v[k]!=null&&!Number.isFinite(v[k]))throw new Error(k+" variant "+(i+1)+" tidak valid.")});if(v.additional_image_link!==null&&!Array.isArray(v.additional_image_link))throw new Error("Additional images harus berupa array.")})}
+function productForEdit(p){var out={};PRODUCT_KEYS.forEach(function(k){if(Object.prototype.hasOwnProperty.call(p,k))out[k]=p[k]});return out}
+function openDetail(id){var p=state.products.find(function(x){return String(x.item_group_id)===String(id)});if(!p){toast("Produk tidak ditemukan pada halaman aktif.");return}state.selected=p;$("detailContent").innerHTML=detailHtml(p);switchScreen("detail")}
+function detailHtml(p){var src=imageUrl(p),variants=Array.isArray(p.variants)?p.variants:[],fields=[["Brand",p.brand],["Product type",p.product_type],["Availability",p.availability],["Condition",p.condition],["GTIN",p.gtin],["MPN",p.mpn],["Item group ID",p.item_group_id],["Quantity",p.quantity_to_sell_on_facebook],["Product URL",p.link],["Updated",date(p.updated_at||p.created_at)]];return '<div class="card" style="margin-bottom:12px"><div class="detail-hero"><div class="detail-image">'+(src?'<img src="'+esc(src)+'" alt="" onerror="this.remove()">':'◇')+'</div><div class="detail-copy"><h2>'+esc(p.title||"Untitled product")+'</h2><p>'+esc(p.brand||"No brand")+'</p><div class="detail-price">'+esc(productPrice(p))+'</div><div class="row-meta"><span class="tag">'+esc(p.availability||"Not set")+'</span><span class="tag">'+variants.length+' variants</span></div></div></div></div><div class="card" style="margin-bottom:12px"><div class="section-title" style="margin:0 0 12px"><h2>Product information</h2></div><div class="detail-grid">'+fields.map(function(f){return '<div class="detail-field"><span>'+esc(f[0])+'</span><strong>'+esc(f[1]==null||f[1]===""?"—":f[1])+'</strong></div>'}).join("")+'</div>'+(p.description?'<p style="font-size:12px;line-height:1.6;color:#626873;margin:14px 0 0">'+esc(p.description)+'</p>':"")+'</div><div class="card"><div class="section-title" style="margin:0 0 8px"><h2>Variants</h2><span>'+variants.length+' total</span></div>'+(variants.length?variants.map(function(v,i){return '<div class="variant-detail"><strong>'+esc(v.color||"Color not set")+' · '+esc(v.size||"Size not set")+'</strong><span>ID: '+esc(v.id||"—")+' · Price: '+esc(money(v.price))+' · Sale: '+esc(money(v.sale_price))+'</span><span>Image: '+esc(v.image_link||"—")+'</span></div>'}).join(""):'<div class="variant-empty">Produk ini belum memiliki variant.</div>')+'</div>'}
+async function saveEditor(event){if(event)event.preventDefault();var form=$("productForm");if(!form.reportValidity())return;var data;try{data=readProduct();validate(data,!!state.editing)}catch(e){toast(e.message);return}var button=$("saveProductBtn"),old=button.textContent;button.disabled=true;button.textContent="Saving…";try{var editing=!!state.editing,id=state.editing&&state.editing.item_group_id;await request(editing?"PATCH":"POST",editing?apiUrl({item_group_id:id}):endpoint(),data);toast(editing?"Product updated successfully.":"Product created successfully.");state.page=1;switchScreen("products");await load()}catch(e){toast("Save gagal: "+e.message)}finally{button.disabled=false;button.textContent=old}}
+async function deleteSelected(){var p=state.selected||state.editing;if(!p)return;if(!window.confirm('Hapus produk "'+(p.title||p.item_group_id)+'"? Tindakan ini tidak dapat dibatalkan.'))return;var b=$("detailDeleteBtn");b.disabled=true;try{await request("DELETE",apiUrl({item_group_id:p.item_group_id}));toast("Product deleted.");state.selected=null;state.page=1;switchScreen("products");await load()}catch(e){toast("Delete gagal: "+e.message)}finally{b.disabled=false}}
+function openAdd(){openEditor(null)}
+function init(){try{state.endpoint=localStorage.getItem(ENDPOINT_KEY)||DEFAULT_ENDPOINT}catch(e){state.endpoint=DEFAULT_ENDPOINT}$("endpointInput").value=state.endpoint;
+ document.querySelectorAll(".nav-item").forEach(function(b){b.addEventListener("click",function(){switchScreen(b.dataset.tab);if(b.dataset.tab==="products")load()})});
+ $("refreshBtn").addEventListener("click",load);$("headerAddBtn").addEventListener("click",openAdd);$("quickAdd").addEventListener("click",openAdd);$("addProductBtn").addEventListener("click",openAdd);$("quickProducts").addEventListener("click",function(){switchScreen("products");load()});$("seeAllBtn").addEventListener("click",function(){switchScreen("products")});
+ $("prevBtn").addEventListener("click",function(){if(state.page>1){state.page--;load()}});$("nextBtn").addEventListener("click",function(){if(state.page<state.totalPages){state.page++;load()}});
+ $("limitSelect").addEventListener("change",function(){state.limit=Number(this.value);state.page=1;load()});["productTypeSelect","sortSelect","orderSelect"].forEach(function(id){$(id).addEventListener("change",function(){state.page=1;load()})});
+ $("searchInput").addEventListener("input",function(){clearTimeout(state.searchTimer);state.searchTimer=setTimeout(function(){state.page=1;load()},350)});
+ $("productCards").addEventListener("click",function(e){var row=e.target.closest("[data-product-id]");if(row)openDetail(row.dataset.productId)});$("recentProducts").addEventListener("click",function(e){var row=e.target.closest("[data-product-id]");if(row){switchScreen("products");openDetail(row.dataset.productId)}});
+ $("detailBackBtn").addEventListener("click",function(){switchScreen("products")});$("detailEditBtn").addEventListener("click",function(){if(state.selected)openEditor(state.selected)});$("detailDeleteBtn").addEventListener("click",deleteSelected);
+ $("editorBackBtn").addEventListener("click",function(){switchScreen(state.returnScreen)});$("cancelEditorBtn").addEventListener("click",function(){switchScreen(state.returnScreen)});$("productForm").addEventListener("submit",saveEditor);
+ $("addVariantBtn").addEventListener("click",function(){var variants=readVariants();variants.push({id:"variant-"+(window.crypto&&crypto.randomUUID?crypto.randomUUID():Date.now()),color:"",size:"",price:null,sale_price:null,image_link:"",additional_image_link:[]});renderVariants(variants)});
+ $("variantFields").addEventListener("click",function(e){var btn=e.target.closest("[data-remove-variant]");if(!btn)return;var variants=readVariants();variants.splice(Number(btn.dataset.removeVariant),1);renderVariants(variants)});
+ $("saveEndpointBtn").addEventListener("click",function(){var value=$("endpointInput").value.trim();try{var u=new URL(value);if(!["https:","http:"].includes(u.protocol))throw new Error();state.endpoint=u.toString();try{localStorage.setItem(ENDPOINT_KEY,state.endpoint)}catch(e){}toast("Endpoint disimpan pada browser ini.");load()}catch(e){toast("Masukkan URL endpoint HTTP atau HTTPS yang valid.")}});
+ $("testConnectionBtn").addEventListener("click",async function(){this.disabled=true;try{var result=await request("GET",apiUrl({page:1,limit:1}));setConnection(true,"Endpoint merespons dengan sukses.");toast("API connection successful.")}catch(e){setConnection(false,e.message);toast("API test gagal: "+e.message)}finally{this.disabled=false}});
+ $("settingsRefreshBtn").addEventListener("click",function(){load();toast("Memuat ulang data produk…")});$("githubBtn").addEventListener("click",function(){window.open("https://github.com/appletheexchangetrx/dashboard","_blank","noopener")});
+ load();
 }
-function makeGroupKey(value){return String(value??"").trim().toLocaleLowerCase("id-ID");}
-function newVariantId(){return "variant-"+(window.crypto?.randomUUID?crypto.randomUUID():Date.now().toString(36)+"-"+Math.random().toString(36).slice(2,10));}
-function initializeVariantManager(variants){
- const colors=[],sizes=[],colorMap=new Map(),sizeMap=new Map(),ids=new Map(),conflicts=[];
- variants.forEach(v=>{
-  const ck=makeGroupKey(v.color),sk=makeGroupKey(v.size);
-  if(!colorMap.has(ck)){const g={key:"c-"+colors.length,color:v.color??"",image_link:v.image_link??"",uploading:false,additional_image_link:Array.isArray(v.additional_image_link)?v.additional_image_link.join("\n"):""};colorMap.set(ck,g);colors.push(g);}
-  else{const g=colorMap.get(ck),images=Array.isArray(v.additional_image_link)?v.additional_image_link.join("\n"):"";if(g.image_link!==(v.image_link??"")||g.additional_image_link!==images)conflicts.push("Data gambar untuk warna "+(v.color||"(kosong)")+" berbeda antar variant.");}
-  if(!sizeMap.has(sk)){const g={key:"s-"+sizes.length,size:v.size??"",price:v.price??"",sale_price:v.sale_price??""};sizeMap.set(sk,g);sizes.push(g);}
-  else{const g=sizeMap.get(sk);if(String(g.price)!==String(v.price??"")||String(g.sale_price)!==String(v.sale_price??""))conflicts.push("Harga untuk ukuran "+(v.size||"(kosong)")+" berbeda antar variant.");}
-  const pair=ck+"::"+sk;if(v.id&&!ids.has(pair))ids.set(pair,v.id);
- });
- if(!colors.length)colors.push({key:"c-0",color:"",image_link:"",additional_image_link:""});
- if(!sizes.length)sizes.push({key:"s-0",size:"",price:"",sale_price:""});
- state.variantManager={colors,sizes,ids,conflicts};
- renderVariantManager();
-}
-function renderVariantManager(){
- const vm=state.variantManager;if(!vm)return;
- const colorHtml=vm.colors.map((c,i)=>{
-  let action="";
-  if(c.uploading)action='<button class="btn" type="button" disabled>Uploading...</button>';
-  else if(c.image_link&&isProductsBucketUrl(c.image_link))action='<span class="variant-manager-help">✓ Uploaded to products</span>';
-  else if(c.image_link&&(c.image_link.trim().startsWith("http://")||c.image_link.trim().startsWith("https://")))action='<button class="btn" type="button" data-upload-color-image="'+esc(c.key)+'">↥ Upload to bucket</button>';
-  return '<div class="variant-color-card" data-color-card="'+esc(c.key)+'"><div class="variant-color-card-head"><strong style="font-size:11px">Color '+(i+1)+'</strong><button class="icon-btn" type="button" data-remove-color="'+esc(c.key)+'">Remove</button></div><div class="field"><label>Color name</label><input data-color-field="color" value="'+esc(c.color)+'" placeholder="e.g. Cosmic Orange"></div><div class="field"><label>Image URL (image_link)</label><input data-color-field="image_link" type="url" value="'+esc(c.image_link)+'" placeholder="https://..."></div><div class="variant-manager-title" data-color-upload-action>'+action+'</div><div class="field"><label>Additional images (one URL per line)</label><textarea data-color-field="additional_image_link" placeholder="https://...">'+esc(c.additional_image_link)+'</textarea></div></div>';
-}).join("");
- const sizeHtml=vm.sizes.map((s,i)=>'<div class="variant-size-row" data-size-row="'+esc(s.key)+'"><div class="field"><label>Size '+(i+1)+'</label><input data-size-field="size" value="'+esc(s.size)+'" placeholder="e.g. 256GB"></div><div class="field"><label>Price</label><input data-size-field="price" type="number" step="any" value="'+esc(s.price)+'"></div><div class="field"><label>Sale price</label><input data-size-field="sale_price" type="number" step="any" value="'+esc(s.sale_price)+'"></div><button class="icon-btn" type="button" data-remove-size="'+esc(s.key)+'" aria-label="Remove size">×</button></div>').join("");
- const conflictHtml=vm.conflicts.length?'<div class="variant-conflict"><strong>Perlu diperiksa:</strong> '+[...new Set(vm.conflicts)].map(esc).join("<br>")+'<br>Nilai dari variant pertama digunakan. Periksa nilai bersama sebelum menyimpan.</div>':"";
- const count=vm.colors.length*vm.sizes.length;
- const preview=vm.colors.flatMap(c=>vm.sizes.map(s=>'<div class="variant-preview-item">'+esc(c.color||"Color belum diisi")+' · '+esc(s.size||"Size belum diisi")+' — '+esc(s.price===""?"Harga kosong":s.price)+'</div>')).join("");
- $("variantFields").innerHTML=conflictHtml+'<div class="variant-manager"><section class="variant-manager-panel"><div class="variant-manager-title"><h4>COLOR · '+vm.colors.length+'</h4><button class="btn" type="button" data-add-color>＋ Add color</button></div>'+colorHtml+'</section><section class="variant-manager-panel"><div class="variant-manager-title"><h4>SIZE & PRICE · '+vm.sizes.length+'</h4><button class="btn" type="button" data-add-size>＋ Add size</button></div>'+sizeHtml+'<p class="variant-manager-help">Harga berlaku untuk semua warna dengan ukuran yang sama.</p></section></div><section class="variant-preview"><div class="variant-preview-head"><span>Variant preview</span><span>'+count+' combinations</span></div><div class="variant-preview-list">'+preview+'</div></section>';
-}
-function syncVariantManagerFromDOM(){
- const vm=state.variantManager;if(!vm)return;
- vm.colors.forEach(c=>{const card=[...$("variantFields").querySelectorAll("[data-color-card]")].find(el=>el.dataset.colorCard===c.key);if(!card)return;card.querySelectorAll("[data-color-field]").forEach(el=>c[el.dataset.colorField]=el.value);});
- vm.sizes.forEach(s=>{const row=[...$("variantFields").querySelectorAll("[data-size-row]")].find(el=>el.dataset.sizeRow===s.key);if(!row)return;row.querySelectorAll("[data-size-field]").forEach(el=>s[el.dataset.sizeField]=el.value);});
-}
-async function uploadColorImage(colorKey){
- syncVariantManagerFromDOM();
- const color=state.variantManager?.colors.find(item=>item.key===colorKey);
- if(!color||!color.image_link.trim())return;
- if(isProductsBucketUrl(color.image_link)){toast("Gambar sudah berada di bucket products.");return}
- color.uploading=true;renderVariantManager();
- try{
-  const publicUrl=await uploadImageUrl(color.image_link.trim(),state.editing?.item_group_id);
-  color.image_link=publicUrl;color.uploading=false;renderVariantManager();
-  toast("Gambar berhasil diunggah dan image_link diperbarui.");
- }catch(error){
-  color.uploading=false;renderVariantManager();
-  toast("Upload gambar gagal: "+error.message+" URL asli tetap dipertahankan.");
- }
-}
-function addColorGroup(){syncVariantManagerFromDOM();const vm=state.variantManager;vm.colors.push({key:"c-"+newVariantId(),color:"",image_link:"",additional_image_link:""});renderVariantManager();}
-function addSizeGroup(){syncVariantManagerFromDOM();const vm=state.variantManager;vm.sizes.push({key:"s-"+newVariantId(),size:"",price:"",sale_price:""});renderVariantManager();}
-function readEditForm(){
- const data={};
- EDIT_FIELDS.forEach(field=>{const raw=$("productFields").querySelector('[data-product-field="'+field.key+'"]').value.trim();if(field.key==="quantity_to_sell_on_facebook")data[field.key]=raw===""?null:Number(raw);else if(field.key==="title"||field.key==="item_group_id")data[field.key]=raw;else data[field.key]=raw===""?null:raw;});
- syncVariantManagerFromDOM();const vm=state.variantManager;
- const colorNames=new Set(),sizeNames=new Set();
- vm.colors.forEach(c=>{const k=makeGroupKey(c.color);if(k&&colorNames.has(k))throw new Error("Nama color harus unik: "+c.color);if(k)colorNames.add(k);});
- vm.sizes.forEach(s=>{const k=makeGroupKey(s.size);if(k&&sizeNames.has(k))throw new Error("Nama size harus unik: "+s.size);if(k)sizeNames.add(k);});
- const variants=[];
- vm.colors.forEach(c=>vm.sizes.forEach(s=>{
-  const pair=makeGroupKey(c.color)+"::"+makeGroupKey(s.size);
-  const parseNumber=value=>value===""?null:Number(value);
-  const additional=c.additional_image_link.trim()?c.additional_image_link.split(/\r?\n/).map(url=>url.trim()).filter(Boolean):null;
-  variants.push({id:vm.ids.get(pair)||newVariantId(),color:c.color.trim()||null,size:s.size.trim()||null,image_link:c.image_link.trim()||null,additional_image_link:additional,price:parseNumber(s.price),sale_price:parseNumber(s.sale_price)});
- }));
- data.variants=variants;return data;
-}
-function showEditPage(index){
- const product=state.products[index];if(!product)return;
- state.editing=product;
- $("editPageTitle").textContent="Edit product";
- $("editPageSubtitle").textContent=(product.title||"Untitled product")+" · "+(product.item_group_id||"");
- renderEditForm(productForEdit(product));
- $("editPage").classList.add("active");
- document.querySelector(".stats").style.display="none";
- document.querySelector(".panel").style.display="none";
- document.querySelector(".shell > .help").style.display="none";
- window.scrollTo({top:0,behavior:"instant"});
-}
-function closeEditPage(){
- $("editPage").classList.remove("active");
- document.querySelector(".stats").style.display="";
- document.querySelector(".panel").style.display="";
- document.querySelector(".shell > .help").style.display="";
- state.editing=null;
-}
-async function saveEditPage(){
- const form=$("editProductForm");if(!form.reportValidity())return;
- const data=readEditForm(),id=state.editing?.item_group_id;
- try{await uploadExternalVariantImages(data);validateProduct(data,true)}catch(e){toast(e.message);return}
- const button=$("editPageSaveBtn"),originalLabel=button.textContent;
- button.disabled=true;button.textContent="Saving...";
- try{
-  const response=await request("PATCH",apiUrl({item_group_id:id}),data);
-  let saved=response.data&&typeof response.data==="object"&&!Array.isArray(response.data)?response.data:null;
-  if(!saved||!Array.isArray(saved.variants)){
-   try{
-    const latest=await request("GET",apiUrl({item_group_id:id,page:1,limit:1}));
-    const rows=Array.isArray(latest.data)?latest.data:[];
-    saved=rows.find(product=>product.item_group_id===id)||saved;
-   }catch{}
-  }
-  if(!saved)saved={...data};
-  else saved={...data,...saved};
-  state.editing=saved;
-  const productIndex=state.products.findIndex(product=>product.item_group_id===id);
-  if(productIndex>=0)state.products[productIndex]=saved;
-  renderEditForm(productForEdit(saved));
-  $("editPageTitle").textContent="Edit product";
-  $("editPageSubtitle").textContent=(saved.title||"Untitled product")+" · "+(saved.item_group_id||"");
-  render();
-  toast("Product updated successfully. Form refreshed.");
- }catch(e){toast(e.message)}finally{button.disabled=false;button.textContent=originalLabel}
-}
-function openEditor(index){
- const isEdit=index!==undefined;state.editing=isEdit?state.products[index]:null;
- $("saveBtn").style.display="";$("productJson").readOnly=false;
- $("editorTitle").textContent=isEdit?"Edit product":"Add product";
- $("saveBtn").textContent=isEdit?"Save changes":"Create product";
- $("deleteBtn").style.display=isEdit?"inline-block":"none";
- $("methodField").style.display=isEdit?"grid":"none";
- $("editorHint").textContent=isEdit?"PATCH · item_group_id adalah identitas tetap dan tidak dapat diubah saat Edit. Setiap variant wajib memiliki id.":"POST · title dan item_group_id wajib. variants harus berupa array; setiap variant wajib memiliki id.";
- $("productJson").value=JSON.stringify(isEdit?productForEdit(state.editing):{title:"",description:null,brand:null,gtin:null,mpn:null,item_group_id:"",availability:"in stock",condition:"new",quantity_to_sell_on_facebook:null,expiration_date:null,link:null,google_product_category:null,product_type:null,rich_text_description:null,custom_label_0:null,sale_price_effective_date:null,variants:[]},null,2);
- $("editorOverlay").classList.add("open");
-}
-const PRODUCT_FIELDS=new Set(["title","description","brand","gtin","mpn","item_group_id","availability","condition","quantity_to_sell_on_facebook","expiration_date","link","google_product_category","product_type","rich_text_description","custom_label_0","sale_price_effective_date","variants"]);
-const VARIANT_FIELDS=new Set(["id","size","color","price","image_link","sale_price","additional_image_link"]);
-const imageUploadJobs=new Map();
-const PRODUCTS_UPLOAD_ENDPOINT=DEFAULT_ENDPOINT+"?action=upload";
-function isProductsBucketUrl(value){
- try{return new URL(value).pathname.includes("/storage/v1/object/public/products/")}catch{return false}
-}
-async function uploadImageUrl(imageUrl,itemGroupId){
- const normalized=new URL(imageUrl);
- if(!["http:","https:"].includes(normalized.protocol))throw new Error("URL gambar harus menggunakan HTTP atau HTTPS.");
- if(isProductsBucketUrl(imageUrl))return imageUrl;
- if(imageUploadJobs.has(imageUrl))return imageUploadJobs.get(imageUrl);
- const job=(async()=>{
-  const source=await fetch(normalized.href,{mode:"cors"});
-  if(!source.ok)throw new Error("Gagal mengambil gambar dari URL (HTTP "+source.status+").");
-  const blob=await source.blob();
-  const allowed=["image/jpeg","image/png","image/webp","image/avif"];
-  if(!allowed.includes(blob.type))throw new Error("Format gambar harus JPEG, PNG, WebP, atau AVIF.");
-  if(!blob.size||blob.size>5*1024*1024)throw new Error("Ukuran gambar harus 1 byte–5 MB.");
-  const ext={"image/jpeg":"jpg","image/png":"png","image/webp":"webp","image/avif":"avif"}[blob.type];
-  const file=new File([blob],"product-image."+ext,{type:blob.type});
-  const form=new FormData();form.append("file",file);
-  if(itemGroupId)form.append("item_group_id",itemGroupId);
-  const response=await fetch(PRODUCTS_UPLOAD_ENDPOINT,{method:"POST",body:form});
-  const result=await response.json().catch(()=>({}));
-  if(!response.ok||result.success!==true||!result.data?.public_url)throw new Error(result.error||"Upload gambar ke bucket products gagal.");
-  return result.data.public_url;
- })();
- imageUploadJobs.set(imageUrl,job);
- try{return await job}catch(error){imageUploadJobs.delete(imageUrl);throw error}
-}
-async function uploadExternalVariantImages(product){
- if(!Array.isArray(product.variants))return product;
- const uploaded=new Map();
- for(const variant of product.variants){
-  if(variant&&typeof variant.image_link==="string"&&variant.image_link.trim()&&!isProductsBucketUrl(variant.image_link)){
-   const source=variant.image_link.trim();
-   if(!uploaded.has(source))uploaded.set(source,await uploadImageUrl(source,product.item_group_id));
-   variant.image_link=uploaded.get(source);
-  }
- }
- return product;
-}
-function productForEdit(product){return Object.fromEntries([...PRODUCT_FIELDS].filter(key=>Object.prototype.hasOwnProperty.call(product,key)).map(key=>[key,product[key]]));}
-function validateProduct(data,isEdit){
- const unknown=Object.keys(data).filter(key=>!PRODUCT_FIELDS.has(key));
- if(unknown.length)throw new Error("Field product tidak didukung crud-products: "+unknown.join(", "));
- if(!isEdit&&(typeof data.title!=="string"||!data.title.trim()))throw new Error("title wajib berupa string yang tidak kosong.");
- if(!isEdit&&(typeof data.item_group_id!=="string"||!data.item_group_id.trim()))throw new Error("item_group_id wajib berupa string yang tidak kosong.");
- if(isEdit&&data.item_group_id!==state.editing.item_group_id)throw new Error("item_group_id tidak dapat diubah saat Edit.");
- if(data.quantity_to_sell_on_facebook!==undefined&&data.quantity_to_sell_on_facebook!==null&&(!Number.isInteger(data.quantity_to_sell_on_facebook)||data.quantity_to_sell_on_facebook<0))throw new Error("quantity_to_sell_on_facebook harus integer non-negatif atau null.");
- if(data.variants!==undefined){
-  if(!Array.isArray(data.variants))throw new Error("variants harus berupa array atau null.");
-  data.variants.forEach((variant,index)=>{
-   const prefix="variants["+index+"]";
-   if(!variant||Array.isArray(variant)||typeof variant!=="object")throw new Error(prefix+" harus berupa object.");
-   const extra=Object.keys(variant).filter(key=>!VARIANT_FIELDS.has(key));
-   if(extra.length)throw new Error(prefix+" memiliki field tidak didukung: "+extra.join(", "));
-   if(typeof variant.id!=="string"||!variant.id.trim())throw new Error(prefix+".id wajib berupa string yang tidak kosong.");
-   ["size","color","image_link"].forEach(key=>{if(variant[key]!==undefined&&variant[key]!==null&&typeof variant[key]!=="string")throw new Error(prefix+"."+key+" harus string atau null.");});
-   ["price","sale_price"].forEach(key=>{if(variant[key]!==undefined&&variant[key]!==null&&(typeof variant[key]!=="number"||!Number.isFinite(variant[key])))throw new Error(prefix+"."+key+" harus angka finite atau null.");});
-   if(variant.additional_image_link!==undefined&&variant.additional_image_link!==null&&(!Array.isArray(variant.additional_image_link)||variant.additional_image_link.some(url=>typeof url!=="string")))throw new Error(prefix+".additional_image_link harus array string atau null.");
-  });
- }
-}
-async function saveProduct(){
- let data;try{data=JSON.parse($("productJson").value)}catch(e){toast("JSON tidak valid: "+e.message);return}
- if(!data||Array.isArray(data)||typeof data!=="object"){toast("Product JSON harus berupa object.");return}
- const isEdit=!!state.editing;const id=state.editing?.item_group_id;
- try{await uploadExternalVariantImages(data);validateProduct(data,isEdit)}catch(e){toast(e.message);return}
- $("saveBtn").disabled=true;
- try{
- if(isEdit){
- await request("PATCH",apiUrl({item_group_id:id}),data);
- toast("Product updated successfully.");
- }else{
- await request("POST",DEFAULT_ENDPOINT,data);toast("Product created successfully.");
- }
- $("editorOverlay").classList.remove("open");await load();
- }catch(e){toast(e.message)}finally{$("saveBtn").disabled=false}
-}
-async function deleteProduct(){
- if(!state.editing)return;const id=state.editing.item_group_id;
- if(!confirm('Delete product "'+(state.editing.title||id)+'"? This action cannot be undone.'))return;
- const pageDelete=$("editPage").classList.contains("active");
- const deleteButton=pageDelete?$("editPageDeleteBtn"):$("deleteBtn");
- deleteButton.disabled=true;
- try{
-  await request("DELETE",apiUrl({item_group_id:id}));
-  $("editorOverlay").classList.remove("open");
-  if(pageDelete)closeEditPage();
-  toast("Product deleted.");
-  if(state.products.length===1&&state.page>1)state.page--;
-  await load();
- }catch(e){toast(e.message)}finally{deleteButton.disabled=false}
-}
-$("applyUpdateBtn").addEventListener("click",applyDashboardUpdate);
-checkDashboardUpdate();
-window.setInterval(checkDashboardUpdate,5*60*1000);
-window.addEventListener("online",checkDashboardUpdate);
-$("addBtn").addEventListener("click",()=>openEditor());
-$("backToProductsBtn").addEventListener("click",closeEditPage);
-$("editPageCancelBtn").addEventListener("click",closeEditPage);
-$("editPageSaveBtn").addEventListener("click",saveEditPage);
-$("editPageDeleteBtn").addEventListener("click",deleteProduct);
-$("variantFields").addEventListener("input",e=>{
- const input=e.target.closest('[data-color-field="image_link"]');
- if(!input)return;
- const card=input.closest("[data-color-card]");
- const action=card?.querySelector("[data-color-upload-action]");
- if(!action)return;
- const url=input.value.trim();
- if(!url){action.innerHTML="";return}
- if(isProductsBucketUrl(url)){action.innerHTML='<span class="variant-manager-help">✓ Uploaded to products</span>';return}
- let valid=false;try{const parsed=new URL(url);valid=parsed.protocol==="http:"||parsed.protocol==="https:"}catch{}
- action.innerHTML=valid?'<button class="btn" type="button" data-upload-color-image="'+esc(card.dataset.colorCard)+'">↥ Upload to bucket</button>':"";
-});
-$("variantFields").addEventListener("click",e=>{
- const uploadBtn=e.target.closest("[data-upload-color-image]");if(uploadBtn){uploadColorImage(uploadBtn.dataset.uploadColorImage);return}
- if(e.target.closest("[data-add-color]")){addColorGroup();return}
- if(e.target.closest("[data-add-size]")){addSizeGroup();return}
- const removeColor=e.target.closest("[data-remove-color]");
- if(removeColor){syncVariantManagerFromDOM();state.variantManager.colors=state.variantManager.colors.filter(c=>c.key!==removeColor.dataset.removeColor);renderVariantManager();return}
- const removeSize=e.target.closest("[data-remove-size]");
- if(removeSize){syncVariantManagerFromDOM();state.variantManager.sizes=state.variantManager.sizes.filter(s=>s.key!==removeSize.dataset.removeSize);renderVariantManager();return}
-});
-
-$("refreshBtn").addEventListener("click",load);
-$("saveBtn").addEventListener("click",saveProduct);
-$("deleteBtn").addEventListener("click",deleteProduct);
-$("prevBtn").addEventListener("click",()=>{if(state.page>1){state.page--;load()}});
-$("nextBtn").addEventListener("click",()=>{if(state.page<state.totalPages){state.page++;load()}});
-$("limitSelect").addEventListener("change",()=>{state.limit=Number($("limitSelect").value);state.page=1;load()});
-["sortSelect","orderSelect","productTypeSelect"].forEach(id=>$(id).addEventListener("change",()=>{state.page=1;load()}));
-$("searchInput").addEventListener("input",()=>{clearTimeout(state.searchTimer);state.searchTimer=setTimeout(()=>{state.page=1;load()},350)});
-document.querySelectorAll("[data-close]").forEach(btn=>btn.addEventListener("click",()=>$(btn.dataset.close).classList.remove("open")));
-document.querySelectorAll(".overlay").forEach(overlay=>overlay.addEventListener("click",e=>{if(e.target===overlay)overlay.classList.remove("open")}));
-$("productCards").addEventListener("click",e=>{const card=e.target.closest("[data-open-edit]");if(card)showEditPage(Number(card.dataset.openEdit))});
-$("productCards").addEventListener("keydown",e=>{if((e.key==="Enter"||e.key===" ")&&e.target.matches("[data-open-edit]")){e.preventDefault();showEditPage(Number(e.target.dataset.openEdit))}});
-$("editorOverlay").addEventListener("click",e=>{if(e.target.closest("[data-close]")||e.target===$("editorOverlay")){$("saveBtn").style.display="";$("productJson").readOnly=false}});
-load();
+init();
 })();
 </script>
 </body>
