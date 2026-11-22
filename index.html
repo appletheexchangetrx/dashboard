@@ -9,7 +9,14 @@
 <style>
 :root{color-scheme:light;--bg:#f5f6f8;--surface:#fff;--ink:#17191d;--muted:#777d87;--line:#e8e9ed;--soft:#f0f1f4;--accent:#1769e0;--accent-soft:#eaf2ff;--green:#16834b;--green-soft:#e9f7ef;--red:#c33d3d;--red-soft:#fff0f0;--amber:#996515;--amber-soft:#fff7e7;--radius:18px;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",sans-serif}
 *{box-sizing:border-box}html,body{margin:0;min-height:100%;background:var(--bg);color:var(--ink)}body{min-height:100dvh}button,input,select,textarea{font:inherit}button{cursor:pointer}button:disabled{opacity:.5;cursor:not-allowed}
-.app{min-height:100dvh;max-width:560px;margin:0 auto;display:flex;flex-direction:column;background:var(--bg);padding-bottom:calc(78px + env(safe-area-inset-bottom))}
+.app{min-height:100dvh;max-width:560px;margin:0 auto;background:var(--bg)}
+.app-shell{min-height:100dvh;display:flex;flex-direction:column;padding-bottom:calc(78px + env(safe-area-inset-bottom))}
+.standalone-pages{display:none;min-height:100dvh;flex-direction:column;background:var(--bg)}
+.standalone-pages.active{display:flex}
+.standalone-content{flex:1;min-height:0;padding:calc(16px + env(safe-area-inset-top)) 16px calc(18px + env(safe-area-inset-bottom));overflow-x:hidden}
+.standalone-pages .screen{display:none}
+.standalone-pages .screen.active{display:block}
+.standalone-pages .sticky-actions{bottom:calc(12px + env(safe-area-inset-bottom))}
 .topbar{position:sticky;top:0;z-index:5;background:rgba(245,246,248,.92);backdrop-filter:blur(18px);padding:calc(12px + env(safe-area-inset-top)) 18px 12px;border-bottom:1px solid rgba(232,233,237,.8);display:flex;align-items:center;justify-content:space-between;gap:12px}
 .brand{display:flex;align-items:center;gap:11px;min-width:0}.brand-mark{width:38px;height:38px;border-radius:12px;background:#17191d;color:#fff;display:grid;place-items:center;font-weight:750;font-size:17px}.brand-copy{min-width:0}.brand-copy strong{display:block;font-size:15px;letter-spacing:-.35px}.brand-copy span{display:block;color:var(--muted);font-size:11px;margin-top:2px}.top-actions{display:flex;gap:8px}
 .icon-button,.button{border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:12px;min-height:40px;padding:0 13px;font-size:13px;font-weight:650}.icon-button{width:40px;padding:0;font-size:17px}.button.primary{background:var(--accent);border-color:var(--accent);color:white}.button.danger{color:var(--red);border-color:#f1d4d4;background:#fff}.button.ghost{background:transparent}.button.small{min-height:34px;padding:0 10px;font-size:12px}.button.block{width:100%}
@@ -35,6 +42,7 @@ main{flex:1;min-height:0;padding:18px 16px 22px;overflow-x:hidden}.screen{displa
 </head>
 <body>
 <div class="app">
+<div class="app-shell" id="appShell">
 <header class="topbar">
  <div class="brand"><div class="brand-mark">A</div><div class="brand-copy"><strong>Apple The Exchange TRX</strong><span id="headerSubtitle">Product Admin</span></div></div>
  <div class="top-actions"><button class="icon-button" id="refreshBtn" aria-label="Refresh">↻</button><button class="icon-button" id="headerAddBtn" aria-label="Add product">＋</button></div>
@@ -76,6 +84,15 @@ main{flex:1;min-height:0;padding:18px 16px 22px;overflow-x:hidden}.screen{displa
  <div class="notice">Dashboard ini menggunakan endpoint CRUD yang tersedia. Pastikan Edge Function memvalidasi autentikasi dan hak akses admin di sisi server. Keamanan tidak dapat dijamin hanya dengan menyembunyikan kontrol di antarmuka.</div>
  <button class="button block" id="settingsRefreshBtn">Refresh product data</button>
 </section>
+</main>
+<nav class="bottom-nav" id="bottomNav" aria-label="Main navigation"><nav class="bottom-nav" id="bottomNav" aria-label="Main navigation">
+ <button class="nav-item active" data-tab="home"><span class="nav-icon">⌂</span><span>Home</span></button>
+ <button class="nav-item" data-tab="products"><span class="nav-icon">▦</span><span>Products</span></button>
+ <button class="nav-item" data-tab="settings"><span class="nav-icon">⚙</span><span>Settings</span></button>
+</nav>
+</div>
+<div class="standalone-pages" id="standalonePages">
+ <main class="standalone-content">
 <section class="screen" id="detailScreen">
  <div class="editor-head"><button class="icon-button" id="detailBackBtn" aria-label="Back">←</button><div><h1>Product detail</h1><p>Informasi produk dan variants</p></div></div>
  <div id="detailContent"></div>
@@ -89,12 +106,9 @@ main{flex:1;min-height:0;padding:18px 16px 22px;overflow-x:hidden}.screen{displa
   <div class="sticky-actions"><button class="button" type="button" id="cancelEditorBtn">Cancel</button><button class="button primary" type="submit" id="saveProductBtn">Save product</button></div>
  </form>
 </section>
-</main>
-<nav class="bottom-nav" id="bottomNav" aria-label="Main navigation">
- <button class="nav-item active" data-tab="home"><span class="nav-icon">⌂</span><span>Home</span></button>
- <button class="nav-item" data-tab="products"><span class="nav-icon">▦</span><span>Products</span></button>
- <button class="nav-item" data-tab="settings"><span class="nav-icon">⚙</span><span>Settings</span></button>
-</nav>
+
+ </main>
+</div>
 </div>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 <script>
@@ -124,7 +138,7 @@ function updateTypes(){var select=$("productTypeSelect"),chosen=select.value,typ
 function productRow(p,detail){var src=imageUrl(p),availability=String(p.availability||"").toLowerCase(),tag=availability==="in stock"?"good":availability==="out of stock"?"warn":"";return '<button class="product-row" type="button" data-product-id="'+esc(p.item_group_id)+'"><span class="thumb">'+(src?'<img src="'+esc(src)+'" alt="" loading="lazy" onerror="this.remove()">':'◇')+'</span><span class="product-row-copy"><strong>'+esc(p.title||"Untitled product")+'</strong><span>'+esc(p.brand||"No brand")+' · '+esc(p.product_type||"Uncategorized")+'</span><span class="row-meta"><span class="tag '+tag+'">'+esc(p.availability||"Not set")+'</span><span class="tag">'+(Array.isArray(p.variants)?p.variants.length:0)+' variants</span></span></span><span style="color:#9ba1aa">›</span></button>'}
 function renderProducts(){updateStats();updateTypes();$("rangeText").textContent=state.total?"Menampilkan "+((state.page-1)*state.limit+1)+"–"+Math.min(state.page*state.limit,state.total)+" dari "+state.total+" produk":"0 produk";$("pageText").textContent="Halaman "+state.page+" / "+Math.max(1,state.totalPages);$("prevBtn").disabled=state.page<=1;$("nextBtn").disabled=!state.totalPages||state.page>=state.totalPages;var html=state.products.map(function(p){return productRow(p,true)}).join("");$("productCards").innerHTML=html||'<div class="empty"><b>Produk tidak ditemukan</b>Coba ubah pencarian atau filter, atau tambahkan produk baru.</div>';$("recentProducts").innerHTML=state.products.slice(0,4).map(function(p){return productRow(p,false)}).join("")||'<div class="empty">Belum ada produk untuk ditampilkan.</div>'}
 async function load(){var seq=++state.loadSequence;$("productCards").innerHTML='<div class="loading">Memuat produk…</div>';try{var result=await request("GET",apiUrl({page:state.page,limit:state.limit,search:$("searchInput").value.trim(),product_type:$("productTypeSelect").value,sort:$("sortSelect").value,order:$("orderSelect").value}));if(seq!==state.loadSequence)return;state.products=Array.isArray(result.data)?result.data:[];var pg=result.pagination||{};state.total=Number(pg.total!=null?pg.total:state.products.length);state.totalPages=Number(pg.total_pages!=null?pg.total_pages:Math.ceil(state.total/state.limit));state.lastSync=new Date();setConnection(true,"Terakhir disinkronkan "+state.lastSync.toLocaleTimeString("id-ID",{hour:"2-digit",minute:"2-digit"}));renderProducts()}catch(e){if(seq!==state.loadSequence)return;state.products=[];state.total=0;state.totalPages=0;renderProducts();$("productCards").innerHTML='<div class="empty"><b>Gagal memuat produk</b>'+esc(e.message)+'</div>';$("recentProducts").innerHTML='<div class="empty">Periksa koneksi API di Settings.</div>';setConnection(false,e.message)}}
-function switchScreen(name){state.screen=name;document.querySelectorAll(".screen").forEach(function(s){s.classList.toggle("active",s.id===name+"Screen")});document.querySelectorAll(".nav-item").forEach(function(b){b.classList.toggle("active",b.dataset.tab===name)});$("bottomNav").style.display=["detail","editor"].includes(name)?"none":"grid";$("headerSubtitle").textContent=name==="home"?"Product Admin":name==="products"?"Product catalog":name==="settings"?"App configuration":name==="detail"?"Product detail":"Product editor";window.scrollTo({top:0,behavior:"instant"})}
+function switchScreen(name){state.screen=name;var standalone=["detail","editor"].includes(name);$("appShell").style.display=standalone?"none":"block";$("standalonePages").classList.toggle("active",standalone);document.querySelectorAll(".screen").forEach(function(s){s.classList.toggle("active",s.id===name+"Screen")});document.querySelectorAll(".nav-item").forEach(function(b){b.classList.toggle("active",b.dataset.tab===name)});$("bottomNav").style.display=standalone?"none":"grid";$("headerSubtitle").textContent=name==="home"?"Product Admin":name==="products"?"Product catalog":"App configuration";window.scrollTo({top:0,behavior:"instant"})}
 function openEditor(product){state.editing=product||null;state.returnScreen=product?"detail":"products";$("editorTitle").textContent=product?"Edit product":"Add product";$("editorSubtitle").textContent=product?(product.title||product.item_group_id):"Lengkapi informasi produk.";renderProductFields(product||{availability:"in stock",condition:"new",variants:[]});renderVariants(product&&Array.isArray(product.variants)?product.variants:[]);$("saveProductBtn").textContent=product?"Save changes":"Create product";switchScreen("editor")}
 function renderProductFields(p){$("productFields").innerHTML=PRODUCT_FIELDS.map(function(f){var value=p[f.key]==null?"":p[f.key],control=f.multiline?'<textarea data-field="'+f.key+'" '+(f.required?"required":"")+'>'+esc(value)+'</textarea>':'<input data-field="'+f.key+'" type="'+(f.type||"text")+'" value="'+esc(value)+'" '+(f.required?"required ":"")+(f.readonly?"readonly ":"")+(f.placeholder?'placeholder="'+esc(f.placeholder)+'" ':"")+'>';return '<div class="field '+(f.full?"full":"")+'"><label>'+esc(f.label)+(f.required?" *":"")+'</label>'+control+'</div>'}).join("")}
 function renderVariants(variants){var html=(variants||[]).map(function(v,i){return '<article class="variant-item" data-variant-index="'+i+'"><div class="variant-item-head"><strong>Variant '+(i+1)+'</strong><button class="button danger small" type="button" data-remove-variant="'+i+'">Remove</button></div><div class="variant-grid"><div class="field"><label>Variant ID</label><input data-vfield="id" value="'+esc(v.id||"")+'" placeholder="Unique variant ID"></div><div class="field"><label>Color</label><input data-vfield="color" value="'+esc(v.color||"")+'" placeholder="e.g. Midnight"></div><div class="field"><label>Size</label><input data-vfield="size" value="'+esc(v.size||"")+'" placeholder="e.g. 256GB"></div><div class="field"><label>Price</label><input data-vfield="price" type="number" step="any" value="'+esc(v.price==null?"":v.price)+'"></div><div class="field"><label>Sale price</label><input data-vfield="sale_price" type="number" step="any" value="'+esc(v.sale_price==null?"":v.sale_price)+'"></div><div class="field full"><label>Image URL</label><input data-vfield="image_link" type="url" value="'+esc(v.image_link||"")+'" placeholder="https://..."></div><div class="field full"><label>Additional image URLs (one per line)</label><textarea data-vfield="additional_image_link">'+esc(Array.isArray(v.additional_image_link)?v.additional_image_link.join("\\n"):"")+'</textarea></div></div></article>'}).join("");$("variantFields").innerHTML=html||'<div class="variant-empty">Belum ada variant. Tambahkan variant jika produk memiliki pilihan warna atau kapasitas.</div>';$("variantCount").textContent=(variants||[]).length+" variants"}
