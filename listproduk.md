@@ -33,3 +33,10 @@ iPhone 16
 iPhone 16e
 iPhone 15
 iPhone 14
+
+AirPods 5
+AirPods Pro 3
+AirPods 4
+AirPods Pro (2nd gen)
+AirPods (3rd gen)
+AirPods Max
